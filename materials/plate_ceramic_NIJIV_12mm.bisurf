@@ -1,0 +1,12 @@
+Density=9600;
+Thickness=12;
+rough=0.1;
+dust=0.75;
+bulletPenetrabilityWithThickness=12;
+soundEnviron=Empty;
+isWater=false;
+friction=0.7;
+restitution=0.5;
+impact = hitConcrete;
+soundHit = Concrete;
+deflection = 0.2;
