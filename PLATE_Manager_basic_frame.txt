@@ -1,0 +1,105 @@
+////////////////////////////////////////////////////////
+// GUI EDITOR OUTPUT START (by [Kor]PabloPikachu, v1.063, #Pifeku)
+////////////////////////////////////////////////////////
+
+class SCT_PLATEMGR_VehLB: RscListbox
+{
+	idc = 1500;
+	x = 0.237065 * safezoneW + safezoneX;
+	y = 0.296 * safezoneH + safezoneY;
+	w = 0.191225 * safezoneW;
+	h = 0.425 * safezoneH;
+};
+class SCT_PLATEMGR_PartCB: RscCombo
+{
+	idc = 2100;
+	text = "gg"; //--- ToDo: Localize;
+	x = 0.237065 * safezoneW + safezoneX;
+	y = 0.228 * safezoneH + safezoneY;
+	w = 0.191225 * safezoneW;
+	h = 0.051 * safezoneH;
+};
+class SCT_PLATEMGR_InvCB: RscCombo
+{
+	idc = 2101;
+	text = "gg"; //--- ToDo: Localize;
+	x = 24.5 * GUI_GRID_W + GUI_GRID_X;
+	y = 4.5 * GUI_GRID_H + GUI_GRID_Y;
+	w = 12 * GUI_GRID_W;
+	h = 1.5 * GUI_GRID_H;
+};
+class SCT_PLATEMGR_T1: RscText
+{
+	idc = 1000;
+	text = "Plates On Place"; //--- ToDo: Localize;
+	x = 0.237065 * safezoneW + safezoneX;
+	y = 0.16 * safezoneH + safezoneY;
+	w = 0.191225 * safezoneW;
+	h = 0.085 * safezoneH;
+	colorText[] = {1,1,1,1};
+	colorBackground[] = {0,0,0,0};
+};
+class SCT_PLATEMGR_T2: RscText
+{
+	idc = 1001;
+	text = "Plates In Inventory"; //--- ToDo: Localize;
+	x = 0.57171 * safezoneW + safezoneX;
+	y = 0.16 * safezoneH + safezoneY;
+	w = 0.191225 * safezoneW;
+	h = 0.085 * safezoneH;
+};
+class SCT_PLATEMGR_Header: RscText
+{
+	idc = 1002;
+	text = "Plate Manager"; //--- ToDo: Localize;
+	x = 0.181291 * safezoneW + safezoneX;
+	y = 0.075 * safezoneH + safezoneY;
+	w = 0.637418 * safezoneW;
+	h = 0.0425 * safezoneH;
+	colorBackground[] = {"(profilenamespace getvariable ['GUI_BCG_RGB_R',0.69])","(profilenamespace getvariable ['GUI_BCG_RGB_G',0.75])","(profilenamespace getvariable ['GUI_BCG_RGB_B',0.5])",0.7};
+};
+class SCT_PLATEMGR_InvLB: RscListbox
+{
+	idc = 1501;
+	x = 0.57171 * safezoneW + safezoneX;
+	y = 0.296 * safezoneH + safezoneY;
+	w = 0.191225 * safezoneW;
+	h = 0.425 * safezoneH;
+};
+class SCT_Btn_APPLY: RscButtonMenuOK
+{
+	x = 0.547806 * safezoneW + safezoneX;
+	y = 0.823 * safezoneH + safezoneY;
+	w = 0.0956127 * safezoneW;
+	h = 0.068 * safezoneH;
+};
+class SCT_Btn_Exit: RscButtonMenuCancel
+{
+	x = 0.667322 * safezoneW + safezoneX;
+	y = 0.823 * safezoneH + safezoneY;
+	w = 0.0956127 * safezoneW;
+	h = 0.068 * safezoneH;
+};
+class SCT_Btn_AddPlate: RscButton
+{
+	idc = 1600;
+	text = "<<Add Plate"; //--- ToDo: Localize;
+	x = 0.452194 * safezoneW + safezoneX;
+	y = 0.347 * safezoneH + safezoneY;
+	w = 0.0956127 * safezoneW;
+	h = 0.085 * safezoneH;
+	tooltip = "add this plate to your desired body part container."; //--- ToDo: Localize;
+};
+class SCT_Btn_RemovePlateVeh: RscButton
+{
+	idc = 1601;
+	text = "Remove Plate>>"; //--- ToDo: Localize;
+	x = 0.452194 * safezoneW + safezoneX;
+	y = 0.534 * safezoneH + safezoneY;
+	w = 0.0956127 * safezoneW;
+	h = 0.085 * safezoneH;
+	tooltip = "Pull out selected plate and add them in inventory."; //--- ToDo: Localize;
+};
+////////////////////////////////////////////////////////
+// GUI EDITOR OUTPUT END
+////////////////////////////////////////////////////////
