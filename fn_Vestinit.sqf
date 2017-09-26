@@ -1,5 +1,5 @@
-#include "SCT_PENETRATORS.hpp
-#include "SCT_LPENET.hpp
+#include "SCT_PENETRATORS.hpp"
+#include "SCT_LPENET.hpp"
 	
 params ["_unit", "_ace"];
 
@@ -18,8 +18,11 @@ FUNC_DAMAGEMODULE = {
 	_traumapadedit = missionNameSpace getVariable ["SCT_PLATE_menu_TRAUMAPAD",128];
 	_debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 	_dam = 0; //return 0 when if- scope does not work
-	_humandam = 5+ (3.48*_penet* _penet); // divider for adjusting human flesh
+	_humandam = 4+ (3.48*_penet* _penet); // divider for adjusting human flesh
 	_impactdam = ((_impact - _armor)/_humandam)max (_impact/(_traumapadedit * _currPad));
+	if(_impact * 2 < _armor) then {
+		_impactdam = 0;
+	};
 	
 	
 	_penetval = _penet*(_impact + _type) -(_armor); //this can have minus value.
@@ -84,8 +87,8 @@ FUNC_CHECKPLATE = {
 	//HEADGEAR FEATURE - CONTINUE WORK AT HOME
 	if(_hGear isEqualTo "") then {_hGear = "empty";}
 	else{
-		_armorvesthitpoint set [7, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"">>"armor")];
-		_armorvesthitpoint set [8, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"">>"armor")];
+		_armorvesthitpoint set [7, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"Head">>"armor")];
+		_armorvesthitpoint set [8, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"Face">>"armor")];
 		
 	};
 		
@@ -134,7 +137,7 @@ FUNC_CHECKPLATE = {
 			};
 		};
 		
-	}forEach (vestItems _this);
+	}forEach (vestItems _unit);
 	
 	{    
 		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{    
@@ -152,7 +155,7 @@ FUNC_CHECKPLATE = {
 			};
 		};
 		
-	}forEach (uniformItems _this);
+	}forEach (uniformItems _unit);
 	//if there is no plate in your vest, the array saves 'no plate'
 	if(count _arrayp < 1) then {
 		_arrayp pushBack ["No plate", 0];
@@ -194,9 +197,9 @@ FUNC_CHECKPLATE = {
 		};
 	};
 
-	_this setVariable["SCT_ARMORSTAT", [_totprot , _arrayp, _totReduceImpact]];
-	_this setVariable ["SCT_BaseArmor", _hitprotection];
-	_this setVariable["SCT_newArmor", _overhaularmor];
+	_unit setVariable["SCT_ARMORSTAT", [_totprot , _arrayp, _totReduceImpact]];
+	_unit setVariable ["SCT_BaseArmor", _hitprotection];
+	_unit setVariable["SCT_newArmor", _overhaularmor];
 	
 };
    
@@ -309,7 +312,7 @@ FUNC_EVENTDMGHANDLE = {
 			_currPad = _tPad select 7;
 			_currarmor = (_newarmor select 7) + + (_endurance select 7);	
 			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
-			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE)*1.5;
 			
 		};
 		case "HitFace" : {
@@ -317,7 +320,7 @@ FUNC_EVENTDMGHANDLE = {
 			_currPad = _tPad select 8;
 			_currarmor = (_newarmor select 8) + + (_endurance select 8);	
 			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
-			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE)*1.2;
 			
 		};
 		case "" : {
@@ -411,11 +414,15 @@ _unit addEventHandler["Respawn", {[_this select 0] call FUNC_CHECKPLATE;}];
 [_unit] spawn {
 	params["_unit"];
 	_tems = Items _unit;
+	_dduk = headgear _unit;
+	_ve = vest _unit;
 	while{alive _unit} do {
 		
-		waitUntil{!(_tems isEqualTo (Items _unit))};
+		waitUntil{!(_tems isEqualTo (Items _unit)) or !(_dduk isEqualTo (headgear _unit)) or !(_ve isEqualTo (vest _unit))};
 		[_unit] call FUNC_CHECKPLATE;
 		_tems = Items _unit;
+		_dduk = headgear _unit;
+		_ve = vest _unit;
 	};
 	
 
