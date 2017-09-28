@@ -1,3 +1,5 @@
+//SonicT's armor overhaul script written in sept. 28th
+
 #include "SCT_PENETRATORS.hpp"
 #include "SCT_LPENET.hpp"
 	
@@ -20,7 +22,7 @@ FUNC_DAMAGEMODULE = {
 	_dam = 0; //return 0 when if- scope does not work
 	_humandam = 4+ (3.48*_penet* _penet); // divider for adjusting human flesh
 	_impactdam = ((_impact - _armor)/_humandam)max (_impact/(_traumapadedit * _currPad));
-	if(_impact * 2 < _armor) then {
+	if(_impact * 3 < _armor) then {
 		_impactdam = 0;
 	};
 	
@@ -323,6 +325,39 @@ FUNC_EVENTDMGHANDLE = {
 			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE)*1.2;
 			
 		};
+		
+		case "HitLeftArm" : {
+			_selectionarmor = _basearmor select 1;
+			_currPad = _tPad select 1;
+			_currarmor = (_newarmor select 1)+ (_endurance select 1);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE);
+		};
+		
+		case "HitRightArm" : {
+			_selectionarmor = _basearmor select 1;
+			_currPad = _tPad select 1;
+			_currarmor = (_newarmor select 1)+ (_endurance select 1);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE);
+		};
+		
+		case "HitLeftLeg" : {
+			_selectionarmor = _basearmor select 6;
+			_currPad = _tPad select 6;
+			_currarmor = (_newarmor select 6) + + (_endurance select 6);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
+		};
+		
+		case "HitRightLeg" : {
+			_selectionarmor = _basearmor select 6;
+			_currPad = _tPad select 6;
+			_currarmor = (_newarmor select 6) + + (_endurance select 6);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
+		};
+		
 		case "" : {
 			_cancallhitback = true;
 	
@@ -360,7 +395,12 @@ FUNC_EVENTDMGHANDLE = {
 	};
 		
 	_dmg = _hitnow + _prevdmg;
-		
+	
+	if((_dmg < 0.02) and (_dmgfrom isKindOf "BulletBase")) then {
+		_bullet = getPos _unit nearestObject _dmgfrom;
+		deleteVehicle _bullet;
+	};
+	
 	if(((_hitnow> 0.3) or (_originalhit > 1)) && _debug) then {
 		_unit globalChat format ["Major hit here : %1, %2 , with armor %3, tot DMG : %4", _hitpoint, _originalhit, _currarmor, _dmg];
 	};
