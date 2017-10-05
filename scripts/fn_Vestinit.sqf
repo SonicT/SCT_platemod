@@ -1,5 +1,8 @@
-#include "SCT_PENETRATORS.hpp"
+//SonicT's armor overhaul script written in sept. 28th
 
+#include "SCT_PENETRATORS.hpp"
+#include "SCT_LPENET.hpp"
+	
 params ["_unit", "_ace"];
 
 
@@ -17,16 +20,18 @@ FUNC_DAMAGEMODULE = {
 	_traumapadedit = missionNameSpace getVariable ["SCT_PLATE_menu_TRAUMAPAD",128];
 	_debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 	_dam = 0; //return 0 when if- scope does not work
-	_humandam = 5+ (3.48*_penet* _penet); // divider for adjusting human flesh
+	_humandam = 4+ (3.48*_penet* _penet); // divider for adjusting human flesh
 	_impactdam = ((_impact - _armor)/_humandam)max (_impact/(_traumapadedit * _currPad));
+	if(_impact * 3 < _armor) then {
+		_impactdam = 0;
+	};
 	
-	//hint str (_traumapadedit * _currPad);
 	
 	_penetval = _penet*(_impact + _type) -(_armor); //this can have minus value.
 	_penetdam = (_penetval/(_humandam)) max 0; //internal penetrating damage
 	_dam = _impactdam + _penetdam;
 		/*	*damage module explanation : if armor cannot hold impact itself, impact will be just go through to body, except armor absorbtion. x0.8 for least shieding.
-			*bullet punch : if armor holded whole impact damage, 
+			*bullet punch : EVEN if armor held whole impact damage, some damages should inflict the wearer. 
 			* *0.6 in penetration : penet damage should not be that big.
 			* +2 in penetration : vanilla .45cal hit is 8, and 5.45 is 7 - but 5.45 penets iiia armor for 4-5 layers in real world... in ACE3mod situation got worse. carbines have less damage..  so made offset.
 			*penetration : if penetration value is high, it is more likely to penetrate armor
@@ -41,13 +46,16 @@ FUNC_DAMAGEMODULE = {
 };
 
 FUNC_CHECKPLATE = {
-	params["_this"];
+	params["_unit"];
 	_debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 	//get original this unit's armor ratings.
 	_uniform = uniform _unit;
 	//uniform config has no armor data - it is 'man' which has armor data. to access, we have to find out 'uniform class'.
 	_uniformdata = getText(configFile>> "cfgWeapons" >> _uniform >> "ItemInfo" >> "uniformClass");
 	_vest = vest _unit;
+
+	//new headgear feature requested by V.Verlioz. I'm not sure how it will be implemented, though.
+	_hGear = headgear _unit;
 	
 	_armorfull = getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"armor");
 	if((isNil "_armorfull") or (_armorfull ==0)) then {_armorfull = 2};
@@ -58,9 +66,11 @@ FUNC_CHECKPLATE = {
 	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitDiaphragm">>"armor"),
 	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitAbdomen">>"armor"),
 	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitPelvis">>"armor"),
-	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitLegs">>"armor")
+	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitLegs">>"armor"),
+	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitHead">>"armor"),
+	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitFace">>"armor")
 	];
-	_armorvesthitpoint = [1,1,1,1,1,1,1];
+	_armorvesthitpoint = [1,1,1,1,1,1,1,1,1];
 		
 		
 	//vanilla vest protection only cares about neck, arms, chest, diaphragm, abdomen and pelvis - i dunno whether other values work. plus vanilla body armor is 1000 default, so theres so mere way to direct damage of this part. this part is damaged almost by dependency.
@@ -73,6 +83,15 @@ FUNC_CHECKPLATE = {
 		_armorvesthitpoint set [4, getNumber (configFile>>"cfgWeapons">>_vest>>"ItemInfo">>"HitpointsProtectionInfo">>"Abdomen">>"armor")];
 		_armorvesthitpoint set [5, getNumber (configFile>>"cfgWeapons">>_vest>>"ItemInfo">>"HitpointsProtectionInfo">>"Pelvis">>"armor")];
 		_armorvesthitpoint set [6, getNumber (configFile>>"cfgWeapons">>_vest>>"ItemInfo">>"HitpointsProtectionInfo">>"Legs">>"armor")];
+		
+	};
+
+	//HEADGEAR FEATURE - CONTINUE WORK AT HOME
+	if(_hGear isEqualTo "") then {_hGear = "empty";}
+	else{
+		_armorvesthitpoint set [7, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"Head">>"armor")];
+		_armorvesthitpoint set [8, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"Face">>"armor")];
+		
 	};
 		
 	if(_uniform isEqualTo "") then {_uniform = "empty"}
@@ -85,52 +104,60 @@ FUNC_CHECKPLATE = {
 		_armoruniformhitpoint set [4, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitAbdomen">>"armor")];
 		_armoruniformhitpoint set [5, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitPelvis">>"armor")];
 		_armoruniformhitpoint set [6, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitLegs">>"armor")];
+		_armoruniformhitpoint set [5, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitPelvis">>"armor")];
+		_armoruniformhitpoint set [6, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitLegs">>"armor")];
+		_armoruniformhitpoint set [7, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitHead">>"armor")];
+		_armoruniformhitpoint set [8, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitFace">>"armor")];
 	};
 	
 	//find out protection value to calculate original hit
 	_hitprotection = [_armorfull*(_armoruniformhitpoint select 0) + (_armorvesthitpoint select 0), _armorfull*(_armoruniformhitpoint select 1) + (_armorvesthitpoint select 1),
 		_armorfull*(_armoruniformhitpoint select 2) + (_armorvesthitpoint select 2),_armorfull*(_armoruniformhitpoint select 3) + (_armorvesthitpoint select 3),
 		_armorfull*(_armoruniformhitpoint select 4) + (_armorvesthitpoint select 4), _armorfull*(_armoruniformhitpoint select 5) + (_armorvesthitpoint select 5),
-		_armorfull*(_armoruniformhitpoint select 6) + (_armorvesthitpoint select 6)];
+		_armorfull*(_armoruniformhitpoint select 6) + (_armorvesthitpoint select 6), _armorfull*(_armoruniformhitpoint select 7) + (_armorvesthitpoint select 7),
+		_armorfull*(_armoruniformhitpoint select 8) + (_armorvesthitpoint select 8)];
 		
 	
 	//Make an array that will contain armor plate information.
 	//plate array 0 : full HP; 1 : armor value; 2 : armor name 3 : armor type
 	_arrayp = [];
-	_totprot = [0,0,0,0,0,0,0];
-	_totReduceImpact = [1,1,1,1,1,1,1];
+	_totprot = [0,0,0,0,0,0,0,0,0];
+	_totReduceImpact = [1,1,1,1,1,1,1,1,1];
 	{    
 		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{    
 			_infoarr = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "plateinfo");
 			_infoprot = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enableparts");
 			_infotrau = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "blunttraumaPad");
+			_cnt = count _infoprot;
 			_canAdd = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enablePlace");
 			if(count _infoarr > 0 && ("Vest" in _canAdd)) then{
 				_arrayp pushBack _infoarr;
-				 for [{_i=0}, {_i < 7}, {_i = _i + 1}] do {
+				 for [{_i=0}, {_i < _cnt}, {_i = _i + 1}] do {
 					_totprot set [_i, (_totprot select _i) + (_infoprot select _i)];
 					_totReduceImpact set [_i, (_totReduceImpact select _i) + (_infotrau select _i)];
 				 };
 			};
 		};
 		
-	}forEach (vestItems _this);
+	}forEach (vestItems _unit);
 	
 	{    
 		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{    
 			_infoarr = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "plateinfo");
 			_infoprot = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enableparts");
 			_infotrau = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "blunttraumaPad");
+			_cnt = count _infoprot;
+			_canAdd = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enablePlace"); //it WAS my mistake where error comes out : you just ommitted this line
 			if(count _infoarr > 0 && ("Uniform" in _canAdd)) then{
 				_arrayp pushBack _infoarr;
-				 for [{_i=0}, {_i < 7}, {_i = _i + 1}] do {
+				 for [{_i=0}, {_i < _cnt}, {_i = _i + 1}] do {
 					_totprot set [_i, (_totprot select _i) + (_infoprot select _i)];
 					_totReduceImpact set [_i, (_totReduceImpact select _i) + (_infotrau select _i)];
 				 };
 			};
 		};
 		
-	}forEach (uniformItems _this);
+	}forEach (uniformItems _unit);
 	//if there is no plate in your vest, the array saves 'no plate'
 	if(count _arrayp < 1) then {
 		_arrayp pushBack ["No plate", 0];
@@ -143,7 +170,7 @@ FUNC_CHECKPLATE = {
 			hintSilent format ["        Armor Equipment\n\nuniform : %1\n
 				vest : %2\n   plate : %3 \n
 				Protection Values\n\n       Neck : %4\n      Arms : %5\nChest : %6\n Diaphragm : %7\n   Abdomen : %8\n
-				Pelvis : %9\n       Legs : %10",
+				Pelvis : %9\n       Legs : %10\n       Head : %11",
 				_uniform, _vest,(_arrayp select 0) select 2,
 				(_overhaularmor select 0) + (_totprot select 0),
 				(_overhaularmor select 1) + (_totprot select 1),
@@ -151,13 +178,14 @@ FUNC_CHECKPLATE = {
 				(_overhaularmor select 3) + (_totprot select 3),
 				(_overhaularmor select 4) + (_totprot select 4),
 				(_overhaularmor select 5) + (_totprot select 5),
-				(_overhaularmor select 6) + (_totprot select 6)];
+				(_overhaularmor select 6) + (_totprot select 6),
+				(_overhaularmor select 7) + (_totprot select 7)];
 		} else{ if(!(((_unit getVariable "SCT_ARMORSTAT") select 1)isEqualTo _arrayp)) 
 			then {
 				hintSilent format ["        Armor Equipment\n\nuniform : %1\n
 					vest : %2\n   plate : %3 \n
 					Protection Values\n\n       Neck : %4\n      Arms : %5\nChest : %6\n Diaphragm : %7\n   Abdomen : %8\n
-					Pelvis : %9\n       Legs : %10",
+					Pelvis : %9\n       Legs : %10\n       Head : %11",
 					_uniform, _vest, _arrayp,
 					(_overhaularmor select 0) + (_totprot select 0),
 					(_overhaularmor select 1) + (_totprot select 1),
@@ -165,14 +193,15 @@ FUNC_CHECKPLATE = {
 					(_overhaularmor select 3) + (_totprot select 3),
 					(_overhaularmor select 4) + (_totprot select 4),
 					(_overhaularmor select 5) + (_totprot select 5),
-					(_overhaularmor select 6) + (_totprot select 6)];
+					(_overhaularmor select 6) + (_totprot select 6),
+					(_overhaularmor select 7) + (_totprot select 7)];
 			};
 		};
 	};
 
-	_this setVariable["SCT_ARMORSTAT", [_totprot , _arrayp, _totReduceImpact]];
-	_this setVariable ["SCT_BaseArmor", _hitprotection];
-	_this setVariable["SCT_newArmor", _overhaularmor];
+	_unit setVariable["SCT_ARMORSTAT", [_totprot , _arrayp, _totReduceImpact]];
+	_unit setVariable ["SCT_BaseArmor", _hitprotection];
+	_unit setVariable["SCT_newArmor", _overhaularmor];
 	
 };
    
@@ -180,7 +209,7 @@ FUNC_CHECKPLATE = {
     
 FUNC_EVENTDMGHANDLE = { 
 
-	_rifledmg = missionNameSpace getVariable ["SCT_PLATE_menu_RiflePenet",2];
+	_rifledmg = missionNameSpace getVariable ["SCT_PLATE_menu_RiflePenet",1];
 	_debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 		 
 	_unit = _this select 0;
@@ -190,11 +219,11 @@ FUNC_EVENTDMGHANDLE = {
 	_basearmor = _unit getVariable "SCT_BaseArmor";
 	_newarmor = _unit getVariable "SCT_newArmor";
 
-	if(isNil "_armorstat") then {_armorstat = [[0,0,0,0,0,0,0], [["NO plate",0]], [1,1,1,1,1,1,1]]};
+	if(isNil "_armorstat") then {_armorstat = [[0,0,0,0,0,0,0,0,0], [["NO plate",0]], [1,1,1,1,1,1,1,1,1]]};
 	if(isNil "_basearmor") then {_basearmor = [2, 10, 2, 2, 2 ,12,10];}; //if basearmor is Nil return to vanilla civilian default.
-	//armor : 0 - hitneck, 1 - hitnarms, 2 - hitchest 3- hitdiaphragm, 4- hitabdomen, 5- hitpelvis, 6- hitlegs
+	//armor : 0 - hitneck, 1 - hitnarms, 2 - hitchest 3- hitdiaphragm, 4- hitabdomen, 5- hitpelvis, 6- hitlegs 7- HITHEAD, 8-HITFACE
 	
-	_highspeed = 0; // this value will determine whether hard armor needed or not.       
+	_highspeed = 0; // this value will determine whether hard armor needs or not.       
 	_endurance = _armorstat select 0;
 	_platetype = ((_armorstat select 1) select 0) select 1;
 	_tPad = _armorstat select 2;
@@ -214,12 +243,11 @@ FUNC_EVENTDMGHANDLE = {
 	_originalhit = _hitnow;
 	if(getNumber (configFile >> "cfgAmmo" >> _dmgfrom >> "typicalSpeed") > 600) then {_highspeed = _rifledmg;} else{_highspeed = 0;}; // penetrates soft armor, multiplying dmg
 	if(_dmgfrom in SCT_PENETRATORS) then {_highspeed = _rifledmg*1.4; }; //AP rounds. Believed to be not effective on flesh targets.
+	if(_dmgfrom in SCT_LPENET) then {_highspeed = _rifledmg * 0.15;}; // less penetratable rounds - Believed to be effective on flesh targets, but not effective to other materials.
 		//implement new damage model
 	
 	_veh = vehicle _unit;
-	/*if(!(_veh isKindOf "Man")&& !(_veh isKindOf "StaticWeapon")) then{
-		_dmg = _dmg;
-	}*/
+	
 	
 	switch (_hitpoint) do {
 			
@@ -278,14 +306,58 @@ FUNC_EVENTDMGHANDLE = {
 			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 		};
 		case "HitBody" : {
-			/*_selectionarmor = _basearmor select 4;
-			_currarmor = ((_newarmor select 4) + _endurance) ;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
-			_hitnow = [_originalhit, _currarmor, _highspeed] call FUNC_DAMAGEMODULE;*/
+			
 		};
 			
-		case "HitHead" : {};
-		case "HitFace" : {};
+		case "HitHead" : {
+			_selectionarmor = _basearmor select 7;
+			_currPad = _tPad select 7;
+			_currarmor = (_newarmor select 7) + + (_endurance select 7);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE)*1.5;
+			
+		};
+		case "HitFace" : {
+			_selectionarmor = _basearmor select 8;
+			_currPad = _tPad select 8;
+			_currarmor = (_newarmor select 8) + + (_endurance select 8);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE)*1.2;
+			
+		};
+		
+		case "HitLeftArm" : {
+			_selectionarmor = _basearmor select 1;
+			_currPad = _tPad select 1;
+			_currarmor = (_newarmor select 1)+ (_endurance select 1);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE);
+		};
+		
+		case "HitRightArm" : {
+			_selectionarmor = _basearmor select 1;
+			_currPad = _tPad select 1;
+			_currarmor = (_newarmor select 1)+ (_endurance select 1);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE);
+		};
+		
+		case "HitLeftLeg" : {
+			_selectionarmor = _basearmor select 6;
+			_currPad = _tPad select 6;
+			_currarmor = (_newarmor select 6) + + (_endurance select 6);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
+		};
+		
+		case "HitRightLeg" : {
+			_selectionarmor = _basearmor select 6;
+			_currPad = _tPad select 6;
+			_currarmor = (_newarmor select 6) + + (_endurance select 6);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
+		};
+		
 		case "" : {
 			_cancallhitback = true;
 	
@@ -323,7 +395,12 @@ FUNC_EVENTDMGHANDLE = {
 	};
 		
 	_dmg = _hitnow + _prevdmg;
-		
+	
+	if((_dmg < 0.02) and (_dmgfrom isKindOf "BulletBase")) then {
+		_bullet = getPos _unit nearestObject _dmgfrom;
+		deleteVehicle _bullet;
+	};
+	
 	if(((_hitnow> 0.3) or (_originalhit > 1)) && _debug) then {
 		_unit globalChat format ["Major hit here : %1, %2 , with armor %3, tot DMG : %4", _hitpoint, _originalhit, _currarmor, _dmg];
 	};
@@ -377,11 +454,15 @@ _unit addEventHandler["Respawn", {[_this select 0] call FUNC_CHECKPLATE;}];
 [_unit] spawn {
 	params["_unit"];
 	_tems = Items _unit;
+	_dduk = headgear _unit;
+	_ve = vest _unit;
 	while{alive _unit} do {
 		
-		waitUntil{!(_tems isEqualTo (Items _unit))};
+		waitUntil{!(_tems isEqualTo (Items _unit)) or !(_dduk isEqualTo (headgear _unit)) or !(_ve isEqualTo (vest _unit))};
 		[_unit] call FUNC_CHECKPLATE;
 		_tems = Items _unit;
+		_dduk = headgear _unit;
+		_ve = vest _unit;
 	};
 	
 

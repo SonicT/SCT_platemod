@@ -12,7 +12,7 @@ if(_traumapad <= 0) then{
 };
 
 if(_rifledmg <= 0 ) then {
-	_rifledmg = 2;
+	_rifledmg = 1;
 };
 
 profileNameSpace setVariable ["SCT_PLATE_menu_TRAUMAPAD",_traumapad];
