@@ -1,0 +1,2 @@
+#define SCT_LPENET \
+[]

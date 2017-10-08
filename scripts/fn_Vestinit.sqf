@@ -70,7 +70,9 @@ FUNC_CHECKPLATE = {
 	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitHead">>"armor"),
 	getNumber (configFile>>"cfgVehicles">>"CAManBase" >>"Hitpoints">>"HitFace">>"armor")
 	];
-	_armorvesthitpoint = [1,1,1,1,1,1,1,1,1];
+	
+	
+	_armorvesthitpoint = [0,0,0,0,0,0,0,0,0];
 		
 		
 	//vanilla vest protection only cares about neck, arms, chest, diaphragm, abdomen and pelvis - i dunno whether other values work. plus vanilla body armor is 1000 default, so theres so mere way to direct damage of this part. this part is damaged almost by dependency.
@@ -209,7 +211,7 @@ FUNC_CHECKPLATE = {
     
 FUNC_EVENTDMGHANDLE = { 
 
-	_rifledmg = missionNameSpace getVariable ["SCT_PLATE_menu_RiflePenet",1];
+	_rifledmg = missionNameSpace getVariable ["SCT_PLATE_menu_RiflePenet",1.375];
 	_debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 		 
 	_unit = _this select 0;
@@ -242,8 +244,8 @@ FUNC_EVENTDMGHANDLE = {
 	_hitnow = _dmg - _prevdmg; //know current damage
 	_originalhit = _hitnow;
 	if(getNumber (configFile >> "cfgAmmo" >> _dmgfrom >> "typicalSpeed") > 600) then {_highspeed = _rifledmg;} else{_highspeed = 0;}; // penetrates soft armor, multiplying dmg
-	if(_dmgfrom in SCT_PENETRATORS) then {_highspeed = _rifledmg*1.4; }; //AP rounds. Believed to be not effective on flesh targets.
-	if(_dmgfrom in SCT_LPENET) then {_highspeed = _rifledmg * 0.15;}; // less penetratable rounds - Believed to be effective on flesh targets, but not effective to other materials.
+	if(_dmgfrom in SCT_PENETRATORS) then {_highspeed = _rifledmg*1.5; }; //AP rounds. Believed to be not effective on flesh targets.
+	if(_dmgfrom in SCT_LPENET) then {_highspeed = _rifledmg * 0.85;}; // less penetratable rounds - Believed to be effective on flesh targets, but not effective to other materials.
 		//implement new damage model
 	
 	_veh = vehicle _unit;
@@ -382,13 +384,24 @@ FUNC_EVENTDMGHANDLE = {
 					_hitnow = _hitnow * _hmul;
 				};
 				
+			}else{
+				if(_dmgfrom != "") then {
+					_orhit = _hitnow;
+					if(_debug) then {
+						systemChat format ["unit %1 hit by non bullet(explosive), %2", _unit, _dmgfrom];
+					};
+					_impactarr = [4,1,5,4,5,4,1,4,4]; //neck, arms, chest, diaphragm, abs, pelvis, legs, head and face
+					_totdef = 0;
+					{
+						_index = _forEachIndex;
+						_totdef = _totdef + ((_tpad select _index) * _x);
+					}forEach _impactarr;
+					if(_totdef < 32) then {_totdef = 32};
+					_hitnow = _orhit * (64/(32 + _totdef));
+					if(_hitnow < (1/_totdef)) then {_hitnow = 0;};
+				};
 			};
-				
-
-				//{if(_x > 0.99) then {_hmul = 1;};}forEach((getAllHitPointsDamage _unit)select 2);
-				
-				
-			};
+		};
 		default {
 			
 		};

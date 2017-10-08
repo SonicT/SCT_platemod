@@ -1,12 +1,12 @@
 _handle = createDialog "SCT_plate_Settings";
 
 _traumapadedit = missionNameSpace getVariable ["SCT_PLATE_menu_TRAUMAPAD",128];
-_rifledmgedit = missionNameSpace getVariable ["SCT_PLATE_menu_RiflePenet",1];
+_rifledmgedit = missionNameSpace getVariable ["SCT_PLATE_menu_RiflePenet",1.375];
 _debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 
 if(isServer) then {
 	_traumapadedit = profileNameSpace getVariable ["SCT_PLATE_menu_TRAUMAPAD",128];
-	_rifledmgedit = profileNameSpace getVariable ["SCT_PLATE_menu_RiflePenet",1];
+	_rifledmgedit = profileNameSpace getVariable ["SCT_PLATE_menu_RiflePenet",1.375];
 	_debug = profileNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 	
 	if(_traumapad <= 0) then{
@@ -14,7 +14,7 @@ if(isServer) then {
 	};
 
 	if(_rifledmg <= 0 ) then {
-		_rifledmg = 1;
+		_rifledmg = 1.375;
 	};
 	
 	missionNameSpace setVariable ["SCT_PLATE_menu_TRAUMAPAD",_traumapadedit];
