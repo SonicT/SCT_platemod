@@ -17,7 +17,7 @@ FUNC_OVERHAULARMOR = {
 FUNC_DAMAGEMODULE = {
 	params ["_impact","_armor", "_penet" , "_type", "_currPad"];
 	
-	_traumapadedit = missionNameSpace getVariable ["SCT_PLATE_menu_TRAUMAPAD",128];
+	_traumapadedit = missionNameSpace getVariable ["SCT_PLATE_menu_TRAUMAPAD",16];
 	_debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 	_dam = 0; //return 0 when if- scope does not work
 	_humandam = 4+ (3.48*_penet* _penet); // divider for adjusting human flesh

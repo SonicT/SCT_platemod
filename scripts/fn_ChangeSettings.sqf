@@ -8,7 +8,7 @@ _traumapad = parseNumber _traumapadedit;
 _rifledmg = parseNumber _rifledmgedit;
 
 if(_traumapad <= 0) then{
-	_traumapad = 128;
+	_traumapad = 16;
 };
 
 if(_rifledmg <= 0 ) then {
