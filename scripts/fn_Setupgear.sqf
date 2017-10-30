@@ -1,17 +1,50 @@
-params["_place"];
-_arr = uiNamespace getVariable ["SCT_setupINV", [player, player]];
-_unit = _arr select 0;
-_cargo = _arr select 1;
-closeDialog 0;
+/* idc reference 
+	Body parts combobox = 5983;
+	inventory finding combobox idc = 5984;
+	Plates which are being used = 5985;
+	Plates in inventory selected on combobox = 5986;
+
+	activate plate button = 5987;
+	disable and put plates to inventory = 5988;
+	close window = 5989;
+*/
+_unit = _this;
+//_unit = uiNamespace getVariable ["SCT_setupINV", player];
+closeDialog 0; //close all UI dialog. when this function spawned ingame, the dialogue will be SCT_PLATE_MANAGER.
+
+//_plates = _unit getVariable [("SCT_part_" + _place),[]]; //get where you selected plate part.
+
+//_ableParts = getArray(configFile >> "cfgWeapons" >> vest _unit >> "SCT_vest_objects" >> "enabledParts"); //code for future dev.
+
+createDialog "SCT_PLATE_MANAGER_2";
+
+waitUntil{!isNull (findDisplay 5981)};
+disableSerialization;
+
+_disp = findDisplay 5981;
+_cbveh = _disp displayCtrl 5983;
+_lbveh = _disp displayCtrl 5985;
+_cbinv = _disp displayCtrl 5984;
+_lbinv = _disp displayCtrl 5986;
+
+
+lbAdd [5983, localize "STR_EquippedP"];
+lbSetCurSel [5983, 0];
+
+lbAdd [5984, localize "STR_SelAll"];
+lbAdd [5984, localize "STR_ItemsEx"];
+lbAdd [5984, localize "STR_ItemsInt"];
+
+lbSetCurSel [5984, 0];
+
+//_cbveh ctrlAddEventHandler [];
+//_cbinv ctrlAddEventHandler [];
+/*
 _vc = "SCT_virtualcargo" createVehicle (position _unit);
 _vc setPosASL (getPosASL _unit);
 _vc setVariable ["SCT_virtualCargoRepresent", _place];
-_plates = _unit getVariable [("SCT_part_" + _place),[]];
+
 /*
-[_vc, [_unit, "SCT_parts_inv_" + _place],
-"inheritsFrom (configFile >> 'cfgMagazines' >> 'SonicT_Item_Base_magtype')" configClasses (configFile >> "cfgMagazines")
-] call BIS_fnc_loadInventory;
-*/
 _platearr = [];
 {
 	if(_x isKindOf "SCT_vest_base") then {
@@ -53,9 +86,6 @@ _unit action ["Gear", _vc];
 		_del = _veh getVariable ["SCT_delcargo", false];
 	};
 	_veh setVariable ["SCT_container_plates", _platearr];
-	/*
-	_hint = [_veh, [_unit, "SCT_parts_inv_" + _place]] call BIS_fnc_saveInventory;
-	hint format ["saved load :\n  %1", _hint];
-	*/
+
 	deleteVehicle _veh;
-};
+};*/
