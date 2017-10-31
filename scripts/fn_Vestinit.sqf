@@ -21,10 +21,20 @@ FUNC_forEachPlateDmg = {
 	_hp = _plate select 1;
 	_fullhp = getNumber (configFile >> "CfgMagazines" >> _name >> "count");
 	_platedmg = _hp;
-	_prot = (getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "enableparts")) select _hitindex;
-	_impactabs = (getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "blunttraumaPad")) select _hitindex;
-	_type = (getArray(configFile >> "CfgMagazines">> _name >> "SCT_ITEMINFO" >> "plateinfo")) select 1;
+	_protarr = getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "enableparts");
+	_imarr = getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "blunttraumaPad");
+	if((count _protarr <(_hitindex + 1)) or (count _imarr < (_hitindex +1)))exitWith{
+		_output = [0, "no"];
+		_output
+	};
+	systemChat format ["plate dmg check - prot : %1, imp : %2 where : %3", _protarr, _imarr, _hitindex];
 	
+	
+	_prot = _protarr select _hitindex;
+	
+	_impactabs = _imarr select _hitindex;
+	_type = (getArray(configFile >> "CfgMagazines">> _name >> "SCT_ITEMINFO" >> "plateinfo")) select 1;
+	_impactdam = 0.0;
 	_impactdam = (_dmgleft - _prot) max (_dmgleft/(_padset * _impactabs));
 	
 	if(_impactdam > 0.005) then {
@@ -35,7 +45,7 @@ FUNC_forEachPlateDmg = {
 	then{
 	
 	};
-	
+	systemChat format ["indiv. plate - dmg left : %1, hp : %2", _impactdam, _platedmg];
 	_output = [_impactdam, _platedmg];
 		
 	
@@ -62,11 +72,17 @@ FUNC_DAMAGEMODULE = {
 		_arr= [];
 		_arr = [_x, _fdam, _hitindex, _traumapadedit] call FUNC_forEachPlateDmg;
 		_hp = _arr select 1;
-		_plates set [_forEachIndex, [(_x select 0), _hp]];
-		if(_hp <= 0) then {
-			_plates deleteAt _forEachIndex;
+		if(_hp isEqualTo "no") then {
+		
+		} else{
+			_plates set [_forEachIndex, [(_x select 0), _hp]];
+			_fdam = _arr select 0;
+			systemChat format ["damaged %1, vest hp have to change to : %2", _fdam, _hp];
+			if(_hp <= 0) then {
+				_plates deleteAt _forEachIndex;
+			};
+			
 		};
-		_fdam = _arr select 0;
 	}forEach _plates;
 		
 	_unit setVariable ["SCT_EquippedPlates", _plates];
