@@ -20,7 +20,7 @@ class CfgPatches {
 			"SCT_plate_steel_ar5001",
 			"SCT_plate_poly_DFNDR"
 			};
-		requiredVersion = 1.550000;
+		requiredVersion = 2.20000;
 		version = 0.400000;
 		requiredAddons[] = {
 			"A3_Data_F",
@@ -92,6 +92,18 @@ class CfgFunctions{
 			class OpenSettings {};
 			class Hitpush{};
 			
+			class Setupgear{};
+			
+			class DisableEquip{};
+			
+			class EquipPlate{};
+			
+			class RefreshManager{};
+			
+			class BtnAddP{};
+			
+			class BtnDelP{};
+			
 		};
 	};
 };
@@ -101,21 +113,197 @@ class CfgFunctions{
 
 
 class CfgVehicles{
-//for basic init. reference : CBA
 	class Land;
+	class Man;
 	/*class Man: Land{
 		class EventHandlers{
 			class SCTEVENT : SCTEVTEX_base {};
 		};
 	};*/ // involving this will cause super rabbit or something
 //followed CBA config but found they are partially enabled, so looked up original	
-	class CAManBase {
+	class CAManBase :Man {
 
 		class EventHandlers {
 			class SCTEVENT : SCTEVTEX_base {};
 		};
 	};
+	class Civilian_F;
+	class SoldierGB;
+	class B_Soldier_base_F;
+	class B_Soldier_02_f; //extern
+	class B_Soldier_03_f;
+	class B_CTRG_Soldier_3_F;	// External class reference
+	
+	class C_man_1: Civilian_F {
 
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_RangeMaster_F: B_Soldier_base_F{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	
+	
+	class B_Story_SF_Captain_F: B_Soldier_02_f{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_Story_Protagonist_F: B_Soldier_02_f{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_Story_Engineer_F: B_Soldier_base_F{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_Story_Pilot_F: B_Soldier_base_F{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_CTRG_soldier_GL_LAT_F: B_Soldier_base_F{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_CTRG_soldier_engineer_exp_F: B_Soldier_02_f{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+
+	
+	class B_CTRG_soldier_M_medic_F: B_Soldier_03_f{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_CTRG_soldier_AR_A_F: B_Soldier_03_f{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_CTRG_Miller_F : B_CTRG_Soldier_3_F {
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+		
+	};
+	
+	class C_man_hunter_1_F: C_man_1{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class C_man_pilot_F: C_man_1{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class C_journalist_F : C_man_1 {
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+		
+	};
+	
+	class C_Orestes; //Extern
+	
+	class C_Nikos: C_Orestes{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class I_G_Soldier_base_F: SoldierGB{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class B_G_Soldier_F;
+	
+	class I_G_Story_Protagonist_F: B_G_Soldier_F{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class I_G_Story_SF_Captain_F: B_G_Soldier_F{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class I_G_resistanceLeader_F: I_G_Story_Protagonist_F{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+	class C_Soldier_VR_F: C_man_1{
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+	};
+	
+
+	class C_man_w_worker_F;	// External class reference
+	
+	class C_scientist_F : C_man_w_worker_F {
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+		
+	};
+	
+
+	
+	class C_Driver_1_F : C_man_1 {
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+		
+	};
+
+	
+	class VirtualMan_F : Civilian_F {
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+		
+	};
+	
+	class VirtualSpectator_F : VirtualMan_F {
+		class EventHandlers {
+			class SCTEVENT : SCTEVTEX_base {};
+		};
+		
+	};
+
+};
+
+class CfgMagazines {
+	class CA_Magazine;
+	#include "data\objects\items_body_plate_magtype.hpp"
 };
 
 class CfgWeapons {

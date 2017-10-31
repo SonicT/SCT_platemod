@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project name="AAPM">
+	<Package name="UI">
+		<Key ID = "STR_InitMenu">
+			<Original>Plate Menu</Original>
+			<English>Plate Menu</English>
+			<Korean>방어구 설정</Korean>
+		</Key>
+		<Key ID = "STR_ItemsEx">
+			<Original>External</Original>
+			<English>External</English>
+			<Korean>외부 아이템</Korean>
+		</Key>
+		<Key ID = "STR_ItemsUniform">
+			<Original>Uniform</Original>
+			<English>Uniform</English>
+			<Korean>유니폼</Korean>
+		</Key>
+		<Key ID = "STR_ItemsVest">
+			<Original>Vest</Original>
+			<English>Vest</English>
+			<Korean>방탄조끼</Korean>
+		</Key>
+		<Key ID = "STR_ItemsBackPack">
+			<Original>BackPack</Original>
+			<English>BackPack</English>
+			<Korean>배낭</Korean>
+		</Key>
+		<Key ID = "STR_ItemsInt">
+			<Original>Owned</Original>
+			<English>Owned</English>
+			<Korean>소지품</Korean>
+		</Key>
+		<Key ID = "STR_SelAll">
+			<Original>All</Original>
+			<English>All</English>
+			<Korean>전체</Korean>
+		</Key>
+		<Key ID = "STR_EquippedP">
+			<Original>Equipped</Original>
+			<English>Equipped</Original>
+			<Korean>장착됨</Korean>
+		</Key>
+		<Key ID = "STR_PlateMenu">
+			<Original>Plate Menu</Original>
+			<English>Plate Menu</Original>
+			<Korean>방탄판 설정</Korean>
+		</Key>
+		<Key ID = "STR_PlateOwn">
+			<Original>Plates On Inventory</Original>
+			<English>Plates On Inventory</Original>
+			<Korean>소지중인 방어구</Korean>
+		</Key>
+	</Package>
+</Project>
+
+<!--project와 package 의 사용
+
+project명 ACE, package명 grenades에서 <Key ID="STR_ACE_Grenades_M127A1_White_Name"> 사용
+
+"$STR_ace_grenades_M127A1_Red_Name"
+
+
+ -->
