@@ -16,8 +16,9 @@ _container = _paramarr select 1;
 
 _parr = _unit getVariable ["SCT_EquippedPlates", []];
 
-_index = lbCurSel 5985;
-_String = lbData[5985, _index];
+_index = lbCurSel 5986;
+_String = (lbData[5986, _index]) splitString ",";
+hint str _String;
 _magname = _String select 0;
 _magcount = parseNumber (_String select 1);
 

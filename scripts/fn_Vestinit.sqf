@@ -20,19 +20,17 @@ FUNC_forEachPlateDmg = {
 	_name = _plate select 0;
 	_hp = _plate select 1;
 	_fullhp = getNumber (configFile >> "CfgMagazines" >> _name >> "count");
-	
+	_platedmg = _hp;
 	_prot = (getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "enableparts")) select _hitindex;
 	_impactabs = (getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "blunttraumaPad")) select _hitindex;
 	_type = (getArray(configFile >> "CfgMagazines">> _name >> "SCT_ITEMINFO" >> "plateinfo")) select 1;
 	
 	_impactdam = (_dmgleft - _prot) max (_dmgleft/(_padset * _impactabs));
 	
-	if(_impactdam < 0.005) then {
-	_platedmg = 0;
+	if(_impactdam > 0.005) then {
+		_platedmg = _hp - _impactdam;
 	};
-	
-	_platedmg = _hp - _impactdam;
-	
+		
 	if(_penet < 0) //it means if the damage is from explosive, adding dmg to hitpoint "".
 	then{
 	
@@ -64,7 +62,7 @@ FUNC_DAMAGEMODULE = {
 		_arr= [];
 		_arr = [_x, _fdam, _hitindex, _traumapadedit] call FUNC_forEachPlateDmg;
 		_hp = _arr select 1;
-		_x set [1, _hp];
+		_plates set [_forEachIndex, [(_x select 0), _hp]];
 		if(_hp <= 0) then {
 			_plates deleteAt _forEachIndex;
 		};
@@ -156,11 +154,16 @@ FUNC_CHECKPLATE = {
 	//Make an array that will contain armor plate information.
 	//plate array 0 : full HP; 1 : armor value; 2 : armor name 3 : armor type
 	{    
-		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{
-
-			_getItem = getText(configFile >> "CfgMagazines" >> _x >> "SCT_ITEMINFO" >> "magtype");
-			if(!isNil("_getItem")) then{
+		if(_x isKindof ["SonicT_Item_Base", configFile >> "CfgWeapons"]) then{
+			_name = _x;
+			_getItem = getText(configFile >> "CfgWeapons" >> _name >> "SCT_ITEMINFO" >> "magtype");
+			if((!isNil("_getItem"))&& (!(_getItem isEqualTo ""))) then{
 				[_unit, _getItem, -1] call SCT_fnc_EquipPlate;
+				systemChat format ["trying to add plate : %1", _getItem];
+			}else{
+				_getItem = _name + "_magtype";
+				[_unit, _getItem, -1]call SCT_fnc_EquipPlate;
+				systemChat format ["trying to add plate : %1", _getItem];
 			};
 			_unit removeItemFromVest _x;
 		};		
@@ -168,11 +171,16 @@ FUNC_CHECKPLATE = {
 	}forEach (vestItems _unit);
 	
 	{    
-		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{    
-
-			_getItem = getText(configFile >> "CfgMagazines" >> _x >> "SCT_ITEMINFO" >> "magtype");
-			if(!isNil("_getItem")) then{
+		if(_x isKindof ["SonicT_Item_Base", configFile >> "CfgWeapons"]) then{    
+			_name = _x;
+			_getItem = getText(configFile >> "CfgWeapons" >> _name >> "SCT_ITEMINFO" >> "magtype");
+			if((!isNil("_getItem"))&& (!(_getItem isEqualTo ""))) then{
 				[_unit, _getItem, -1] call SCT_fnc_EquipPlate;
+				systemChat format ["trying to add plate : %1", _getItem];
+			}else{
+				_getItem = _name + "_magtype";
+				[_unit, _getItem, -1]call SCT_fnc_EquipPlate;
+				systemChat format ["trying to add plate : %1", _getItem];
 			};
 			_unit removeItemFromUniform _x;
 		};

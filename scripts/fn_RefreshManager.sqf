@@ -9,6 +9,9 @@
 	close window = 5989;
 */
 
+lbClear 5985;
+lbClear 5986;
+
 _paramarr = uiNamespace getVariable ["SCT_setupINV", [player, objNull]];
 
 _unit = _paramarr select 0;
@@ -30,7 +33,7 @@ if((count _parr) > 0 ) then {
 		_percent = round((_hp/_fhp) * 100);
 		_num = lbAdd[5985, (format["%1(%2)",_dispn , _percent])];
 		lbSetPicture[5985, _num, _pic];
-		lbSetData [5985, (format["%1,%2,outer", _dispn, _hp])];
+		lbSetData [5985, _num, (format["%1,%2,outer", _dispn, _hp])];
 	} forEach _parr;
 }else {
 	lbClear 5985;
@@ -49,7 +52,7 @@ if(((lbCurSel 5984) == 0) or ((lbCurSel 5984) == 2)) then {
 			
 			_num = lbAdd[5986,format["%1(%2)",_dispn , _percent]];
 			lbSetPicture[5986, _num, _pic];
-			lbSetData [5986, format["%1,%2,inner", _dispn, _hp]];
+			lbSetData [5986, _num, format["%1,%2,inner", _dispn, _hp]];
 		};
 	}forEach _arrex;
 };

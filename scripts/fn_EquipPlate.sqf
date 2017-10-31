@@ -7,6 +7,7 @@ _count = getNumber(configFile >> "CfgMagazines" >> _tem >> "count");
 
 if(_HP <0) then {
 	_HP = _count;
+	systemChat format ["%1 magtype init : %2", _tem, _HP];
 };
 
 _Plateprot pushBack [_tem, _HP];
