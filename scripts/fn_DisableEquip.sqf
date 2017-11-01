@@ -15,7 +15,7 @@ if((count _Plateprot) > 0) then {
 		};
 	}forEach _Plateprot;
 	
-	if(_num > 0 ) then {
+	if(_num >= 0 ) then {
 		_Plateprot deleteAt _num;
 	};
 };
@@ -30,6 +30,7 @@ if(!isNil("_where")) then {
 		 _v = "GroundWeaponHolder" createVehicle (position _unit);
 		 _v setPosASL (getPosASL _unit);
 		 _v addMagazineAmmoCargo [_magname,1, _magcount];
+		 uiNamespace setVariable ["SCT_setupINV", [_unit, _v]];
 	};
 } else{
 	if(_unit canAdd _magname) then {
@@ -39,5 +40,7 @@ if(!isNil("_where")) then {
 		 _v = "GroundWeaponHolder" createVehicle (position _unit);
 		 _v setPosASL (getPosASL _unit);
 		 _v addMagazineAmmoCargo [_magname,1, _magcount];
+		 uiNamespace setVariable ["SCT_setupINV", [_unit, _v]];
 	};
 };
+

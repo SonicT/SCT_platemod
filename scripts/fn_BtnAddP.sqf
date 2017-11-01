@@ -79,3 +79,4 @@ if(_where isEqualTo "inner") then {
 
 
 [_unit, _magname, _magcount] call SCT_fnc_EquipPlate;
+_this call SCT_fnc_RefreshManager;

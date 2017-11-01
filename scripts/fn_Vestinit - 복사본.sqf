@@ -14,87 +14,35 @@ FUNC_OVERHAULARMOR = {
 	_newhitpoint
 };
 
-FUNC_forEachPlateDmg = {
-	params["_plate", "_dmgleft", "_hitindex", "_padset"];
-	
-	systemChat format ["damage to plate input - name: %1, original : %2, where %3", _plate, _dmgleft, _hitindex];
-	
-	_name = _plate select 0;
-	_hp = _plate select 1;
-	_fullhp = getNumber (configFile >> "CfgMagazines" >> _name >> "count");
-	_platedmg = _hp;
-	_protarr = getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "enableparts");
-	_imarr = getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "blunttraumaPad");
-	if((count _protarr <(_hitindex + 1)) or (count _imarr < (_hitindex +1)))exitWith{
-		_output = [0, "no"];
-		_output
-	};
-	
-	
-	_prot = _protarr select _hitindex;
-	
-	_impactabs = _imarr select _hitindex;
-	_type = (getArray(configFile >> "CfgMagazines">> _name >> "SCT_ITEMINFO" >> "plateinfo")) select 1;
-	_impactdam = 0.0;
-	_impactdam = (_dmgleft - _prot) max (_dmgleft/((_padset * _impactabs)+1));
-	
-	if(_impactdam > 0.005) then {
-		_platedmg = _hp - _impactdam;
-	};
-		
-	if(_penet < 0) //it means if the damage is from explosive, adding dmg to hitpoint "".
-	then{
-	
-	};
-	systemChat format ["indiv. plate - dmg left : %1, hp : %2", _impactdam, _platedmg];
-	_output = [_impactdam, _platedmg];
-		
-	
-	_output
-};
-
 FUNC_DAMAGEMODULE = {
-	params ["_impact","_unit", "_basearmor","_penet", "_hitindex"];
+	params ["_impact","_armor", "_penet" , "_type", "_currPad"];
 	
 	_traumapadedit = missionNameSpace getVariable ["SCT_PLATE_menu_TRAUMAPAD",16];
 	_debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
+	_dam = 0; //return 0 when if- scope does not work
 	_humandam = 4+ (3.48*_penet* _penet); // divider for adjusting human flesh
+	_impactdam = ((_impact - _armor)/_humandam)max (_impact/(_traumapadedit * _currPad));
+	if(_impact * 3 < _armor) then {
+		_impactdam = 0;
+	};
 	
-	_impactdam = ((_impact - _basearmor)/_humandam)max (_impact/_traumapadedit);
-
-	_penetval = ((_penet*_impact) -(_basearmor))max 0; //this can have minus value.
+	
+	_penetval = _penet*(_impact + _type) -(_armor); //this can have minus value.
 	_penetdam = (_penetval/(_humandam)) max 0; //internal penetrating damage
-	
-	_fdam = _impactdam + _penetdam;
-	
-	_plates = _unit getVariable ["SCT_EquippedPlates", []];
-	
-	{
-		_arr= [];
-		_unit globalChat format ["damagemodule call plate %1, dmg : %2, where : %3", _x, _impact, _hitindex];
-		_arr = [_x, _fdam, _hitindex, _traumapadedit] call FUNC_forEachPlateDmg;
-		_hp = _arr select 1;
-		if(_hp isEqualTo "no") then {
-		
-		} else{
-			_plates set [_forEachIndex, [(_x select 0), _hp]];
-			_fdam = _arr select 0;
-			systemChat format ["damaged %1, vest hp have to change to : %2", _fdam, _hp];
-			if(_hp <= 0) then {
-				_plates deleteAt _forEachIndex;
-			};
-			
-		};
-	}forEach _plates;
-		
-	_unit setVariable ["SCT_EquippedPlates", _plates];
-	
-	if(_debug && (_fdam > 0.05)) then {
+	_dam = _impactdam + _penetdam;
+		/*	*damage module explanation : if armor cannot hold impact itself, impact will be just go through to body, except armor absorbtion. x0.8 for least shieding.
+			*bullet punch : EVEN if armor held whole impact damage, some damages should inflict the wearer. 
+			* *0.6 in penetration : penet damage should not be that big.
+			* +2 in penetration : vanilla .45cal hit is 8, and 5.45 is 7 - but 5.45 penets iiia armor for 4-5 layers in real world... in ACE3mod situation got worse. carbines have less damage..  so made offset.
+			*penetration : if penetration value is high, it is more likely to penetrate armor
+		*/
+
+	if(_debug && (_dam > 0.05)) then {
 		systemChat format ["damage - impact : %1, penetration : %2, tot %3", _impactdam, _penetdam, _dam];
 	};
 		
 
-	_fdam
+	_dam
 };
 
 FUNC_CHECKPLATE = {
@@ -140,13 +88,16 @@ FUNC_CHECKPLATE = {
 		
 	};
 
-	if(_hGear isEqualTo "") then {_hGear = "empty";}else{
+	//HEADGEAR FEATURE - CONTINUE WORK AT HOME
+	if(_hGear isEqualTo "") then {_hGear = "empty";}
+	else{
 		_armorvesthitpoint set [7, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"Head">>"armor")];
 		_armorvesthitpoint set [8, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"Face">>"armor")];
 		
 	};
 		
-	if(_uniform isEqualTo "") then {_uniform = "empty"}else{
+	if(_uniform isEqualTo "") then {_uniform = "empty"}
+	else{
 		_armorfull = getNumber (configFile>>"cfgVehicles">>_uniformdata >>"armor");
 		_armoruniformhitpoint set [0, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitNeck">>"armor")];
 		_armoruniformhitpoint set [1, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitArms">>"armor")];
@@ -171,47 +122,102 @@ FUNC_CHECKPLATE = {
 	
 	//Make an array that will contain armor plate information.
 	//plate array 0 : full HP; 1 : armor value; 2 : armor name 3 : armor type
+	_arrayp = [];
+	_totprot = [0,0,0,0,0,0,0,0,0];
+	_totReduceImpact = [1,1,1,1,1,1,1,1,1];
 	{    
-		if(_x isKindof ["SonicT_Item_Base", configFile >> "CfgWeapons"]) then{
-			_name = _x;
-			_getItem = getText(configFile >> "CfgWeapons" >> _name >> "SCT_ITEMINFO" >> "magtype");
-			if((!isNil("_getItem"))&& (!(_getItem isEqualTo ""))) then{
-				[_unit, _getItem, -1] call SCT_fnc_EquipPlate;
-				systemChat format ["trying to add plate : %1", _getItem];
-			}else{
-				_getItem = _name + "_magtype";
-				[_unit, _getItem, -1]call SCT_fnc_EquipPlate;
-				systemChat format ["trying to add plate : %1", _getItem];
+		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{
+/*		
+			_infoarr = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "plateinfo");
+			_infoprot = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enableparts");
+			_infotrau = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "blunttraumaPad");
+			_cnt = count _infoprot;
+			_canAdd = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enablePlace");
+			if(count _infoarr > 0 && ("Vest" in _canAdd)) then{
+				_arrayp pushBack _infoarr;
+				 for [{_i=0}, {_i < _cnt}, {_i = _i + 1}] do {
+					_totprot set [_i, (_totprot select _i) + (_infoprot select _i)];
+					_totReduceImpact set [_i, (_totReduceImpact select _i) + (_infotrau select _i)];
+				 };
 			};
+*/
+			_getItem = getText(configFile >> "CfgMagazines" >> _x >> "SCT_ITEMINFO" >> "magtype");
+			if(!isNil("_getItem")){
+				[_unit, _getItem] call SCT_fnc_EquipPlate;
+			}
 			_unit removeItemFromVest _x;
 		};		
 		
 	}forEach (vestItems _unit);
 	
 	{    
-		if(_x isKindof ["SonicT_Item_Base", configFile >> "CfgWeapons"]) then{    
-			_name = _x;
-			_getItem = getText(configFile >> "CfgWeapons" >> _name >> "SCT_ITEMINFO" >> "magtype");
-			if((!isNil("_getItem"))&& (!(_getItem isEqualTo ""))) then{
-				[_unit, _getItem, -1] call SCT_fnc_EquipPlate;
-				systemChat format ["trying to add plate : %1", _getItem];
-			}else{
-				_getItem = _name + "_magtype";
-				[_unit, _getItem, -1]call SCT_fnc_EquipPlate;
-				systemChat format ["trying to add plate : %1", _getItem];
+		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{    
+		/*
+			_infoarr = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "plateinfo");
+			_infoprot = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enableparts");
+			_infotrau = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "blunttraumaPad");
+			_cnt = count _infoprot;
+			_canAdd = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enablePlace"); //it WAS my mistake where error comes out : you just ommitted this line
+			if(count _infoarr > 0 && ("Uniform" in _canAdd)) then{
+				_arrayp pushBack _infoarr;
+				 for [{_i=0}, {_i < _cnt}, {_i = _i + 1}] do {
+					_totprot set [_i, (_totprot select _i) + (_infoprot select _i)];
+					_totReduceImpact set [_i, (_totReduceImpact select _i) + (_infotrau select _i)];
+				 };
 			};
+			*/
+			_getItem = getText(configFile >> "CfgMagazines" >> _x >> "SCT_ITEMINFO" >> "magtype");
+			if(!isNil("_getItem")){
+				[_unit, _getItem] call SCT_fnc_EquipPlate;
+			}
 			_unit removeItemFromUniform _x;
 		};
 		
 	}forEach (uniformItems _unit);
+	//if there is no plate in your vest, the array saves 'no plate'
+	if(count _arrayp < 1) then {
+		_arrayp pushBack ["No plate", 0];
+	};
 	
 	//Make overhauled armor.
 	_overhaularmor = _hitprotection apply {[_x] call FUNC_OVERHAULARMOR};
+	if((isPlayer _unit) && (local _unit) && _debug) then {
+		if(isNil{_unit getVariable "SCT_ARMORSTAT"}) then {
+			hintSilent format ["        Armor Equipment\n\nuniform : %1\n
+				vest : %2\n   plate : %3 \n
+				Protection Values\n\n       Neck : %4\n      Arms : %5\nChest : %6\n Diaphragm : %7\n   Abdomen : %8\n
+				Pelvis : %9\n       Legs : %10\n       Head : %11",
+				_uniform, _vest,(_arrayp select 0) select 2,
+				(_overhaularmor select 0) + (_totprot select 0),
+				(_overhaularmor select 1) + (_totprot select 1),
+				(_overhaularmor select 2) + (_totprot select 2),
+				(_overhaularmor select 3) + (_totprot select 3),
+				(_overhaularmor select 4) + (_totprot select 4),
+				(_overhaularmor select 5) + (_totprot select 5),
+				(_overhaularmor select 6) + (_totprot select 6),
+				(_overhaularmor select 7) + (_totprot select 7)];
+		} else{ if(!(((_unit getVariable "SCT_ARMORSTAT") select 1)isEqualTo _arrayp)) 
+			then {
+				hintSilent format ["        Armor Equipment\n\nuniform : %1\n
+					vest : %2\n   plate : %3 \n
+					Protection Values\n\n       Neck : %4\n      Arms : %5\nChest : %6\n Diaphragm : %7\n   Abdomen : %8\n
+					Pelvis : %9\n       Legs : %10\n       Head : %11",
+					_uniform, _vest, _arrayp,
+					(_overhaularmor select 0) + (_totprot select 0),
+					(_overhaularmor select 1) + (_totprot select 1),
+					(_overhaularmor select 2) + (_totprot select 2),
+					(_overhaularmor select 3) + (_totprot select 3),
+					(_overhaularmor select 4) + (_totprot select 4),
+					(_overhaularmor select 5) + (_totprot select 5),
+					(_overhaularmor select 6) + (_totprot select 6),
+					(_overhaularmor select 7) + (_totprot select 7)];
+			};
+		};
+	};
 
+	_unit setVariable["SCT_ARMORSTAT", [_totprot , _arrayp, _totReduceImpact]];
 	_unit setVariable ["SCT_BaseArmor", _hitprotection];
 	_unit setVariable["SCT_newArmor", _overhaularmor];
-	
-	_baseimpactdiv = [1,1,1,1,1,1,1,1,1];
 	
 };
    
@@ -225,13 +231,18 @@ FUNC_EVENTDMGHANDLE = {
 	_unit = _this select 0;
 	_cancallhitback = false;
 
+	_armorstat = _unit getVariable "SCT_ARMORSTAT";
 	_basearmor = _unit getVariable "SCT_BaseArmor";
 	_newarmor = _unit getVariable "SCT_newArmor";
 
+	if(isNil "_armorstat") then {_armorstat = [[0,0,0,0,0,0,0,0,0], [["NO plate",0]], [1,1,1,1,1,1,1,1,1]]};
 	if(isNil "_basearmor") then {_basearmor = [2, 10, 2, 2, 2 ,12,10];}; //if basearmor is Nil return to vanilla civilian default.
 	//armor : 0 - hitneck, 1 - hitnarms, 2 - hitchest 3- hitdiaphragm, 4- hitabdomen, 5- hitpelvis, 6- hitlegs 7- HITHEAD, 8-HITFACE
 	
 	_highspeed = 0; // this value will determine whether hard armor needs or not.       
+	_endurance = _armorstat select 0;
+	_platetype = ((_armorstat select 1) select 0) select 1;
+	_tPad = _armorstat select 2;
 	
 	_shooter = _this select 3;
 	_dmg = _this select 2;
@@ -260,41 +271,55 @@ FUNC_EVENTDMGHANDLE = {
 			
 		case "HitNeck" : {
 			_selectionarmor = _basearmor select 0;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 0] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 0;
+			_currarmor = (_newarmor select 0) + (_endurance select 0);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 						
 		};
 		case "HitArms" : {
 			_selectionarmor = _basearmor select 1;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 1] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 1;
+			_currarmor = (_newarmor select 1)+ (_endurance select 1);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE);
 							
 		};
 		case "HitChest" : {
 			_selectionarmor = _basearmor select 2;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 2] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 2;
+			_currarmor = (_newarmor select 2) + (_endurance select 2);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 				
 		};
 		case "HitDiaphragm" : {
 			_selectionarmor = _basearmor select 3;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 3] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 3;
+			_currarmor = (_newarmor select 3) + (_endurance select 3);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 		};
 		case "HitAbdomen" : {
 			_selectionarmor = _basearmor select 4;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 4] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 4;
+			_currarmor = (_newarmor select 4)+ (_endurance select 4) ;
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 		};
 		case "HitPelvis": {
 			_selectionarmor = _basearmor select 5;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 5] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 5;
+			_currarmor = (_newarmor select 5) + + (_endurance select 5);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 		};
 		case "HitLegs" : {
 			_selectionarmor = _basearmor select 6;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 6] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 6;
+			_currarmor = (_newarmor select 6) + + (_endurance select 6);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 		};
 		case "HitBody" : {
 			
@@ -302,39 +327,51 @@ FUNC_EVENTDMGHANDLE = {
 			
 		case "HitHead" : {
 			_selectionarmor = _basearmor select 7;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 7] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 7;
+			_currarmor = (_newarmor select 7) + + (_endurance select 7);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE)*1.5;
 			
 		};
 		case "HitFace" : {
 			_selectionarmor = _basearmor select 8;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 8] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 8;
+			_currarmor = (_newarmor select 8) + + (_endurance select 8);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE)*1.2;
 			
 		};
 		
 		case "HitLeftArm" : {
 			_selectionarmor = _basearmor select 1;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 1] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 1;
+			_currarmor = (_newarmor select 1)+ (_endurance select 1);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE);
 		};
 		
 		case "HitRightArm" : {
 			_selectionarmor = _basearmor select 1;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 1] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 1;
+			_currarmor = (_newarmor select 1)+ (_endurance select 1);
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = ([_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE);
 		};
 		
 		case "HitLeftLeg" : {
 			_selectionarmor = _basearmor select 6;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 6] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 6;
+			_currarmor = (_newarmor select 6) + + (_endurance select 6);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 		};
 		
 		case "HitRightLeg" : {
 			_selectionarmor = _basearmor select 6;
-			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection
-			_hitnow = [_originalhit, _unit, _selectionarmor, _highspeed, 6] call FUNC_DAMAGEMODULE;
+			_currPad = _tPad select 6;
+			_currarmor = (_newarmor select 6) + + (_endurance select 6);	
+			_originalhit = _hitnow * _selectionarmor; //revert to original bullet damage, not divided by armor protection.... it was sick anyway.
+			_hitnow = [_originalhit, _currarmor, _highspeed, _platetype, _currPad] call FUNC_DAMAGEMODULE;
 		};
 		
 		case "" : {
@@ -368,12 +405,14 @@ FUNC_EVENTDMGHANDLE = {
 						systemChat format ["unit %1 hit by non bullet(explosive), %2", _unit, _dmgfrom];
 					};
 					_impactarr = [4,1,5,4,5,4,1,4,4]; //neck, arms, chest, diaphragm, abs, pelvis, legs, head and face
-					_totdmg = 0;
+					_totdef = 0;
 					{
 						_index = _forEachIndex;
-						_totdmg = _totdmg + (([_orhit, _unit, 1, -1,_index] call FUNC_DAMAGEMODULE) * _x);
+						_totdef = _totdef + ((_tpad select _index) * _x);
 					}forEach _impactarr;
-					_hitnow = _totdmg/32;
+					if(_totdef < 32) then {_totdef = 32};
+					_hitnow = _orhit * (64/(32 + _totdef));
+					if(_hitnow < (1/_totdef)) then {_hitnow = 0;};
 				};
 			};
 		};
@@ -433,7 +472,8 @@ FUNC_EVENTDMGHANDLE = {
 if(_ace == 1) then {
 _unit addEventHandler["HandleDamage", {[_this select 0, _this select 1, _this call FUNC_EVENTDMGHANDLE, _this select 3, _this select 4, _this select 5, _this select 6] call ACE_medical_fnc_handleDamage;}];
 
-}else{
+}
+else{
 	_unit addEventHandler["HandleDamage", {[_this select 0, _this select 1, _this select 2, _this select 3, _this select 4, _this select 5, _this select 6, _this select 7] call FUNC_EVENTDMGHANDLE;}];
 
 };

@@ -17,6 +17,7 @@ _container = _paramarr select 1;
 
 _index = lbCurSel 5985;
 _String = (lbData[5985, _index]) splitString ",";
+_unit globalChat format ["item delete : " , _String];
 hint str _String;
 _magname = _String select 0;
 _magcount = parseNumber (_String select 1);
@@ -30,3 +31,5 @@ if(_where isEqualTo "outer") then{
 };
 
 lbDelete[5985, _index];
+
+_this call SCT_fnc_RefreshManager;
