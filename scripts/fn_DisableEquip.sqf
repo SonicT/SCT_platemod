@@ -1,23 +1,15 @@
-params["_unit", "_tem", "_HP", "_where"];
+params["_unit", "_num", "_where"];
 
 _Plateprot = _unit getVariable ["SCT_EquippedPlates" , []];
 
-_num = -1;
+if(isNil "_Plateprot") exitWith{};
 
-if((count _Plateprot) > 0) then {
+_magname = (_Plateprot select _num) select 0;
+_magcount = (_Plateprot select _num) select 1;
 
-	{
-		_name = _x select 0;
-		_thp = _x select 1;
-		
-		if((_name isEqualTo _tem) && (_thp == _HP)) then {
-			_num = _forEachIndex;
-		};
-	}forEach _Plateprot;
-	
-	if(_num >= 0 ) then {
-		_Plateprot deleteAt _num;
-	};
+if((count _Plateprot) >=(_num + 1)) then {
+	_Plateprot deleteAt _num;
+	systemChat "deleteDO";
 };
 
 _unit setVariable ["SCT_EquippedPlates" , _Plateprot];

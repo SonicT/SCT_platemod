@@ -37,7 +37,7 @@ if((_where isEqualTo "outer") && ! (isNull _container)) then {
 		};
 	}forEach _itemarr;
 	
-	if(_num > 0) then {
+	if(_num >= 0) then {
 		_itemarr deleteAt _num;
 		clearMagazineCargo _container;
 		{
@@ -49,6 +49,7 @@ if((_where isEqualTo "outer") && ! (isNull _container)) then {
 };
 
 if(_where isEqualTo "inner") then {
+	_num = -1;
 	_itemarr = magazinesAmmo _unit;
 	{
 		_name = _x select 0;
@@ -59,7 +60,7 @@ if(_where isEqualTo "inner") then {
 		};
 	}forEach _itemarr;
 	
-	if(_num > 0) then {
+	if(_num >= 0) then {
 		_itemarr deleteAt _num;
 		_ritems = items _unit;
 		

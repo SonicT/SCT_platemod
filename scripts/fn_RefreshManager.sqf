@@ -52,7 +52,7 @@ if(((lbCurSel 5984) == 0) or ((lbCurSel 5984) == 2)) then {
 			
 			_num = lbAdd[5986,format["%1(%2)",_dispn , _percent]];
 			lbSetPicture[5986, _num, _pic];
-			lbSetData [5986, _num, format["%1,%2,inner", _magname, _hp]];
+			lbSetData [5986, _num, format["%1,%2,inner", _magname, _magcount]];
 		};
 	}forEach _arrex;
 };
