@@ -31,7 +31,25 @@ if(isNil {_unit getVariable "Init"}) then {
 			
 		};
 
-		_unit addEventHandler ["InventoryOpened", {_this spawn SCT_FUNC_OPENMGR;}];		
+		_unit addEventHandler ["InventoryOpened", {_this spawn SCT_FUNC_OPENMGR;}];	
+		
+		/*_unit addMPEventHandler ["MPKilled", {_unit = _this select 0; _var = _unit getVariable["SCT_EquippedPlates", []]; 
+			_unit setVariable["AAPM_RespawnPlates", _var]; {[_unit, _forEachIndex]call SCT_fnc_DisableEquip;}forEach _var; }];
+			
+		_unit addMPEventHandler ["MPRespawn", {_unit = _this select 0; _var = _unit getVariable["AAPM_RespawnPlates",[]]; hint format ["%1 killed", _unit];
+			{[_unit, _x select 0, _x select 1]call SCT_fnc_EquipPlate;}forEach _var;}];
+		*/	
+		_unit addMPEventHandler ["MPKilled", {
+			_unit = _this select 0; _var = _unit getVariable["SCT_EquippedPlates", []];
+			_unit setVariable["AAPM_RespawnPlates", _var];
+			_v = "GroundWeaponHolder" createVehicle (position _unit);
+			_v setPosASL (getPosASL _unit);
+			{ 
+				_v addMagazineAmmoCargo [_magname,1, _magcount];}forEach _var; 
+			}];
+			
+		_unit addEventHandler ["Respawn", {_unit = _this select 0; _var = _unit getVariable["AAPM_RespawnPlates",[]]; hint format ["%1 killed", _unit];
+			{[_unit, _x select 0, _x select 1]call SCT_fnc_EquipPlate;}forEach _var;}];
 	};
 	
 	

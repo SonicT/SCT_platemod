@@ -5,7 +5,11 @@ _Plateprot = _unit getVariable ["SCT_EquippedPlates" , []];
 if(isNil "_Plateprot") exitWith{};
 
 _magname = (_Plateprot select _num) select 0;
-_magcount = (_Plateprot select _num) select 1;
+_hporigin = (_Plateprot select _num) select 1;
+
+_magcount = floor _phorigin;
+
+if(_magcount < 0) then {_magcount = 0;};
 
 if((count _Plateprot) >=(_num + 1)) then {
 	_Plateprot deleteAt _num;
@@ -13,6 +17,7 @@ if((count _Plateprot) >=(_num + 1)) then {
 };
 
 _unit setVariable ["SCT_EquippedPlates" , _Plateprot];
+[_unit, _Plateprot] call SCT_fnc_virtualLoad;
 
 if(!isNil("_where")) then {
 	if(_where canAdd _magname) then {

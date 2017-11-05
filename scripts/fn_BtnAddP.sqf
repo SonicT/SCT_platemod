@@ -76,7 +76,7 @@ if(_where isEqualTo "inner") then {
 	};
 	
 	
-};//not done yet
+};
 
 
 [_unit, _magname, _magcount] call SCT_fnc_EquipPlate;
