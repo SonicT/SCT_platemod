@@ -38,13 +38,17 @@ if(isNil {_unit getVariable "Init"}) then {
 			
 		_unit addMPEventHandler ["MPRespawn", {_unit = _this select 0; _var = _unit getVariable["AAPM_RespawnPlates",[]]; hint format ["%1 killed", _unit];
 			{[_unit, _x select 0, _x select 1]call SCT_fnc_EquipPlate;}forEach _var;}];
-		*/	
+		*/
+		
 		_unit addMPEventHandler ["MPKilled", {
 			_unit = _this select 0; _var = _unit getVariable["SCT_EquippedPlates", []];
 			_unit setVariable["AAPM_RespawnPlates", _var];
 			_v = "GroundWeaponHolder" createVehicle (position _unit);
 			_v setPosASL (getPosASL _unit);
+			hint format ["unit %1 should dropt items %2", _unit, _var];
 			{ 
+				_magname = _x select 0;
+				_magcount = _x select 1;
 				_v addMagazineAmmoCargo [_magname,1, _magcount];}forEach _var; 
 			}];
 			

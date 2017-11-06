@@ -39,7 +39,7 @@ FUNC_forEachPlateDmg = {
 	_impactdam = (_dmgleft - _prot) max (_dmgleft/((_padset * _impactabs)+1));
 	
 	if(_impactdam > 0.005) then {
-		_platedmg = _hp - _impactdam;
+		_platedmg = floor(_hp - (_impactdam * 10000));
 	};
 		
 	if(_penet < 0) //it means if the damage is from explosive, adding dmg to hitpoint "".

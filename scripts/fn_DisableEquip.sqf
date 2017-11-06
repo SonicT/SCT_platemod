@@ -5,9 +5,8 @@ _Plateprot = _unit getVariable ["SCT_EquippedPlates" , []];
 if(isNil "_Plateprot") exitWith{};
 
 _magname = (_Plateprot select _num) select 0;
-_hporigin = (_Plateprot select _num) select 1;
+_magcount = (_Plateprot select _num) select 1;
 
-_magcount = floor _phorigin;
 
 if(_magcount < 0) then {_magcount = 0;};
 
