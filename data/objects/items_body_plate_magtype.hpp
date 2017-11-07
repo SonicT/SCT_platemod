@@ -11,7 +11,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		picture = "";
 		descriptionShort = "";
 		mass = 1;
-		count = 1000000;
+		count = 20000;
 	};
 
 	class SCT_plate_ceramic_esapi_magtype: SonicT_Item_Base_magtype {
@@ -21,7 +21,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-IV Ceramic, Boron Carbide<br />Introduced: 2005<br />Will withstand 30-06 M2AP";
 		mass = 108;
-		count = 1000000;
+		count = 12000;
 		class SCT_ITEMINFO{
 			plateinfo[] = {"ESAPI NIJ IV ceramic ICW soft body armor", 0};
 			enableparts[] = {0,0,14,14,14,0,0,0,0};
@@ -37,7 +37,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-IV Ceramic, Boron Carbide<br />Introduced: 2009<br />Will withstand 30-06 M2AP";
 		mass = 120;
-		count = 1000000;
+		count = 20000;
 
 		class SCT_ITEMINFO{
 			plateinfo[] = {"ESAPI NIJ IV ceramic, Ceradyne-produced", 0};
@@ -53,7 +53,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		picture = "";
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Civilians and LE<br />Rating: NIJ Level IV, Aluminum Oxide<br />Introduced: 2010s<br />Will withstand repeat 30-06 impacts";
-		count = 1000000;
+		count = 20000;
 
 		mass = 140;
 
@@ -72,7 +72,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-IV Ceramic, Boron Carbide<br />Introduced: 2005<br />Will withstand 30-06 M2AP<br />Maximum Coverage";
 
-		count = 1000000;
+		count = 20000;
 		mass = 120;
 
 		class SCT_ITEMINFO{
@@ -90,7 +90,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-V Ceramic, Boron Carbide<br />Introduced: 2016<br />Will withstand M993, M995, or 7N39";
 
-		count = 1000000;
+		count = 20000;
 		mass = 102;
 
 		class SCT_ITEMINFO{
@@ -108,7 +108,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: People's Liberation Army, African Mercenaries<br />Rating: MIL-V Ceramic, Aluminum Oxide<br />Introduced: 2010s<br />Will withstand M993, M995, or 7N39";
 
-		count = 1000000;
+		count = 20000;
 		mass = 105;
 
 
@@ -127,7 +127,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: People's Liberation Army SO<br />Rating: MIL-VI Ceramic, Aluminum Oxide<br />Introduced: 2010s<br />Will withstand heavy impacts";
 
-		count = 1000000;
+		count = 20000;
 		mass = 180;
 
 
@@ -146,7 +146,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-V Ceramic, Boron Carbide<br />Introduced: 2016<br />Will withstand M993, M995, or 7N39<br />Maximum Coverage";
 
-		count = 1000000;
+		count = 20000;
 		mass = 155;
 
 
@@ -165,7 +165,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-VA Ceramic, Boron Carbide<br />Introduced: 2009<br />Will withstand M995";
 
-		count = 1000000;
+		count = 20000;
 		mass = 105;
 
 
@@ -184,7 +184,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-V Ceramic, Boron Carbide<br />Introduced: 2011<br />Special Theater Contingency Plate";
 
-		count = 1000000;
+		count = 20000;
 		mass = 121;
 
 
@@ -203,7 +203,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-III Ceramic, Boron Carbide<br />Introduced: 1998<br />Multi-hit resistant";
 
-		count = 1000000;
+		count = 20000;
 		mass = 96;
 
 
@@ -222,7 +222,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: US Air Force Pararescuemen<br />Rating: MIL-V Ceramic, Boron Carbide<br />Introduced: 2007<br />Rated to stop M993, M995, or 7N24";
 
-		count = 1000000;
+		count = 20000;
 		mass = 158;
 
 
@@ -241,7 +241,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: US Air Force Pararescuemen<br />Rating: MIL-V Ceramic, Boron Carbide, Maximum Coverage<br />Introduced: 2007<br />Rated to stop M993, M995, or 7N24";
 
-		count = 1000000;
+		count = 20000;
 		mass = 198;
 
 		class SCT_ITEMINFO{
@@ -259,7 +259,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: United States Military<br />Rating: MIL-III Ceramic, Aluminum Oxide<br />Introduced: 1996<br />Will withstand 7.62x51mm Ball";
 
-		count = 1000000;
+		count = 20000;
 		mass = 128;
 
 		class SCT_ITEMINFO{
@@ -277,7 +277,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: US Pilots<br />Rating: MIL-III, Early Aluminum Oxide<br />Introduced: 1965<br />Will withstand repeat 7.62x39mm";
 
-		count = 1000000;
+		count = 20000;
 		mass = 300;
 
 
@@ -296,7 +296,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: US Aircrewmen<br />Rating: MIL-III, Early Aluminum Oxide<br />Introduced: 1970s<br />Will withstand .30 Ball";
 
-		count = 1000000;
+		count = 20000;
 		mass = 280;
 
 
@@ -315,7 +315,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: US Army, Korean War<br />Rating: Level II-, Doron Laminate<br />Introduced: 1951<br />Will withstand .45 ACP";
 
-		count = 1000000;
+		count = 20000;
 		mass = 95;
 
 		class SCT_ITEMINFO{
@@ -333,7 +333,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: US Army, Vietnam War<br />Rating: Level II-, Doron Laminate<br />Introduced: 1955<br />Will withstand .45 ACP";
 
-		count = 1000000;
+		count = 20000;
 		mass = 105;
 
 		class SCT_ITEMINFO{
@@ -351,7 +351,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: US Army, Battle of Okinawa<br />Rating: Level II-, Doron Laminate<br />Introduced: 1945<br />Will withstand Flak";
 
-		count = 1000000;
+		count = 20000;
 		mass = 80;
 
 		class SCT_ITEMINFO{
@@ -369,7 +369,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_ceramic_esapi.p3d"
 		descriptionShort = "Used By: US Army, Vietnam War<br />Rating: Level II-, Doron Laminate<br />Introduced: 1952<br />Will withstand .45 ACP";
 
-		count = 1000000;
+		count = 20000;
 		mass = 98;
 
 
@@ -390,7 +390,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 
 
 		mass = 106;
-		count = 1000000;
+		count = 20000;
 
 		class SCT_ITEMINFO{
 			plateinfo[] = {"SOV-2000 Level III", 0};
@@ -407,7 +407,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: PMCs and American Special Forces<br />Rating: NIJ Level IV Ceramic, Special Design<br />Introduced: 1999<br />Will withstand multiple IV-level threats";
 
-		count = 1000000;
+		count = 20000;
 		mass = 114;
 
 
@@ -426,7 +426,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: American Special Forces<br />Rating: MIL-V Ceramic, Special Design<br />Introduced: 1999<br />Will withstand M993 and M995";
 
-		count = 1000000;
+		count = 20000;
 		mass = 130;
 
 
@@ -445,7 +445,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: American Special Forces<br />Rating: MIL-VI Ceramic, Special Design<br />Introduced: 1999<br />Will withstand .338 Lapua Magnum";
 
-		count = 1000000;
+		count = 20000;
 		mass = 130;
 
 
@@ -464,7 +464,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: 75th Ranger Regiment<br />Rating: MIL-IV Ceramic, Aluminum Oxide<br />Introduced: 1993<br />Will withstand multiple 7.62x51mm FMJ rounds";
 
-		count = 1000000;
+		count = 20000;
 		mass = 140;
 
 
@@ -483,7 +483,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: 75th Ranger Regiment<br />Rating: MIL-IV Ceramic, Maximum Coverage, Aluminum Oxide<br />Introduced: 1993<br />Will withstand multiple 7.62x51mm FMJ rounds.<br />Maximum Coverage";
 
-		count = 1000000;
+		count = 20000;
 		mass = 190;
 
 
@@ -502,7 +502,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Preppers<br />Rating: MIL-IV Ceramic, Aluminum Oxide<br />Introduced: 2010s<br />Will withstand M61 7.62x51mm AP Ball";
 
-		count = 1000000;
+		count = 20000;
 			mass = 152;
 
 
@@ -521,7 +521,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Russian Armed Forces<br />Rating: GOST 6A Ceramic, Boron Carbide<br />Introduced: 2016<br />Multiple-hit resistant against 7.62x54mm FMJ";
 
-		count = 1000000;
+		count = 20000;
 		mass = 108;
 
 
@@ -540,7 +540,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Russian Armed Forces<br />Rating: GOST 6 Ceramic, Boron Carbide<br />Introduced: 2015<br />Multiple-hit resistant against 7.62x54mm FMJ";
 
-		count = 1000000;
+		count = 20000;
 		mass = 104;
 
 
@@ -559,7 +559,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Spetsnaz<br />Rating: MIL-V Ceramic, Boron Carbide<br />Introduced: 2016<br />Highly resistant to all standard small arm cartridges";
 
-		count = 1000000;
+		count = 20000;
 		mass = 130;
 
 
@@ -578,7 +578,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Alfa Group, Spetsnaz<br />Rating: MIL-VS Sapper-grade, Aluminum Oxide<br />Introduced: 2017<br />Capable against repeat AP 7.62x54mm";
 
-		count = 1000000;
+		count = 20000;
 		mass = 225;
 
 
@@ -597,7 +597,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: PLA Honor Guard<br />Rating: MIL-VS, Aluminum Oxide<br />Introduced: 2017<br />Capable against repeat AP 7.62x54mm";
 
-		count = 1000000;
+		count = 20000;
 		mass = 204;
 
 
@@ -616,7 +616,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Alfa Group, Spetsnaz<br />Rating: MIL-V, RATNIK-2<br />Introduced: 2016<br />Capable against 7.62x54mm repeat impacts";
 
-		count = 1000000;
+		count = 20000;
 		mass = 120;
 
 
@@ -635,7 +635,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Alfa Group, Spetsnaz<br />Rating: MIL-VI+, Perfected Boron Carbide<br />Introduced: 2017<br />Rated against repeat .338 Lapua Magnum";
 
-		count = 1000000;
+		count = 20000;
 		mass = 210;
 
 
@@ -654,7 +654,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: OMON, Alfa Group<br />Rating: MIL-VA Ceramic, Boron Carbide<br />Introduced: 2017<br />Resistant against common small-arms AP cartridges";
 
-		count = 1000000;
+		count = 20000;
 		mass = 90;
 
 
@@ -673,7 +673,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Assault Spetsnaz<br />Rating: MIL-VI Ceramic, Boron Carbide<br />Introduced: 2017<br />Rated against .338 Lapua Magnum";
 
-		count = 1000000;
+		count = 20000;
 		mass = 190;
 
 		class SCT_ITEMINFO{
@@ -691,7 +691,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Civilians<br />Rating: NIJ Level IV Ceramic<br />Introduced: 2000s<br />Rated against 30-06 M2AP";
 
-		count = 1000000;
+		count = 20000;
 		mass = 190;
 
 
@@ -710,7 +710,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Civilians<br />Rating: NIJ Level IV Ceramic<br />Introduced: 2000s<br />Rated against 30-06 M2AP";
 
-		count = 1000000;
+		count = 20000;
 		mass = 170;
 
 
@@ -729,7 +729,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: SWAT Tactical Units<br />Rating: NIJ Level IV Ceramic<br />Introduced: 2000s<br />Rated against 30-06 M2AP";
 
-		count = 1000000;
+		count = 20000;
 		mass = 140;
 
 
@@ -748,7 +748,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Assault Spetsnaz<br />Rating: MIL-VI Ceramic<br />Introduced: 2017<br />Rated to stop .338 Lapua Magnum";
 
-		count = 1000000;
+		count = 20000;
 		mass = 164;
 
 
@@ -767,7 +767,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Heavy Assault Spetsnaz<br />Rating: MIL-VII Ceramic<br />Introduced: 2017<br />Rated to stop .460 Weatherby Magnum impacts or a large number of small-caliber rounds.";
 
-		count = 1000000;
+		count = 20000;
 		mass = 190;
 
 
@@ -786,7 +786,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Heavy Assault Spetsnaz<br />Rating: MIL-VII+ Ceramic<br />Introduced: 2017<br />Rated to stop repeat .338 API526 impacts.";
 
-		count = 1000000;
+		count = 20000;
 		mass = 230;
 
 
@@ -805,7 +805,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Ultra-Heavy Assault Spetsnaz<br />Rating: MIL-VIIIA Ceramic<br />Introduced: 2017<br />Rated to stop 12.7x99 or 12.7x108mm FMJ";
 
-		count = 1000000;
+		count = 20000;
 		mass = 250;
 
 
@@ -824,7 +824,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Vladimir Putin<br />Rating: MIL-XI Depleted Uranium<br />Introduced: 2017<br />Rated to stop 25x59mm APFSDS";
 
-		count = 1000000;
+		count = 20000;
 		mass = 250;
 
 
@@ -843,7 +843,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Ultra-Heavy Assault Spetsnaz<br />Rating: MIL-VIII Ceramic<br />Introduced: 2017<br />Rated to stop 12.7x99 or 12.7x108mm FMJ";
 
-		count = 1000000;
+		count = 20000;
 		mass = 290;
 
 
@@ -862,7 +862,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Contractors, Civilians, PMCs<br />Rating: NIJ Level III+<br />Introduced: 2000s<br />Will withstand repeat 5.56x45mm M193 impacts";
 
-		count = 1000000;
+		count = 20000;
 		mass = 158;
 
 
@@ -881,7 +881,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Contractors, Civilians, PMCs<br />Rating: NIJ Level III<br />Introduced: 2000s<br />Will withstand repeat 7.62x51mm FMJ impacts";
 
-		count = 1000000;
+		count = 20000;
 		mass = 164;
 
 
@@ -900,7 +900,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Contractors, Civilians, PMCs<br />Rating: NIJ Level III, Small-sized<br />Introduced: 2000s<br />Will withstand repeat 7.62x51mm FMJ impacts";
 
-		count = 1000000;
+		count = 20000;
 		mass = 140;
 
 
@@ -919,7 +919,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Contractors, Civilians, PMCs<br />Rating: NIJ Level III, Maximum Coverage<br />Introduced: 2000s<br />Will withstand repeat 7.62x51mm FMJ impacts";
 
-		count = 1000000;
+		count = 20000;
 		mass = 231;
 
 
@@ -938,7 +938,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Contractors, Civilians, PMCs<br />Rating: NIJ Level IV, Steel<br />Introduced: 2000s<br />Will withstand repeat 30-06 M2AP impacts";
 
-		count = 1000000;
+		count = 20000;
 		mass = 195;
 
 
@@ -957,7 +957,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Contractors, Civilians, PMCs<br />Rating: NIJ Level IV, Ceramic<br />Introduced: 2000s<br />Will withstand .22-250 Remington";
 
-		count = 1000000;
+		count = 20000;
 		mass = 150;
 
 
@@ -976,7 +976,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Contractors, Civilians, PMCs<br />Rating: NIJ Level IV, Maximum Coverage<br />Introduced: 2000s<br />Will withstand repeat 30-06 M2AP impacts";
 
-		count = 1000000;
+		count = 20000;
 		mass = 270;
 
 
@@ -995,7 +995,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Well-funded PMCs, well-connected survivalists<br />Rating: NIJ Level IV, MIL-V<br />Introduced: 2010s<br />Rated for .338 Lapua Magnum";
 
-		count = 1000000;
+		count = 20000;
 		mass = 230;
 
 
@@ -1016,7 +1016,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 
 
 		mass = 270;
-		count = 1000000;
+		count = 20000;
 
 		class SCT_ITEMINFO{
 			plateinfo[] = {"AR500 Level VI", 2};
@@ -1033,7 +1033,7 @@ class SonicT_Item_Base_magtype: CA_Magazine {
 		model = "\SCT\addons\SonicT_vest\data\objects\SCT_steel_ar500_3p.p3d"
 		descriptionShort = "Used By: Well-funded PMCs, well-connected survivalists<br />Rating: NIJ Level IV, MIL-V, Maximum Coverage<br />Introduced: 2010s<br />Rated for .338 Lapua Magnum";
 
-		count = 1000000;
+		count = 20000;
 		mass = 330;
 
 
