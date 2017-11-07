@@ -50,7 +50,7 @@ if((lbCurSel 5984) != 1) then{
 			_dispn = getText(configFile >> "CfgMagazines" >> _magname >> "displayName");
 			_percent = round((_magcount/_fhp) * 100);
 			
-			_num = lbAdd[5986,format["%1(%2)",_dispn , _percent]];
+			_num = lbAdd[5986,format["%1(%2 %)",_dispn , _percent]];
 			lbSetPicture[5986, _num, _pic];
 			lbSetData [5986, _num, format["%1,%2,inner", _magname, _magcount]];
 		};
@@ -68,9 +68,9 @@ if((!(isNull _container)) && ((lbCurSel 5984) < 2)) then{
 			_dispn = getText(configFile >> "CfgMagazines" >> _magname >> "displayName");
 			_percent = round((_magcount/_fhp) * 100);
 			
-			_num = lbAdd[5986, format["%1(%2)",_dispn , _percent]];
+			_num = lbAdd[5986, format["%1(%2 %)",_dispn , _percent]];
 			lbSetPicture[5986, _num, _pic];
-			lbSetData [5986, format["%1,%2,outer", _magname, _magcount]];
+			lbSetData [5986, _num, format["%1,%2,outer", _magname, _magcount]];
 		};
 	}forEach _arrex;
 };

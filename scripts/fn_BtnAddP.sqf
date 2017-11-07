@@ -18,7 +18,7 @@ _parr = _unit getVariable ["SCT_EquippedPlates", []];
 
 _index = lbCurSel 5986;
 _String = (lbData[5986, _index]) splitString ",";
-hint str _String;
+if((isNil "_String") or (_String isEqualTo []))exitWith{hint "ButtonAdd warning : lbData is null or empty"};
 _magname = _String select 0;
 _magcount = parseNumber (_String select 1);
 

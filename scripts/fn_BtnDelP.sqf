@@ -17,7 +17,7 @@ _container = _paramarr select 1;
 
 _index = lbCurSel 5985;
 _String = (lbData[5985, _index]) splitString ",";
-_unit globalChat format ["item delete : " , _String];
+if((isNil "_String") or (_String isEqualTo []))exitWith{hint "ButtonAdd warning : lbData is null or empty"};
 
 _where = _String select 2;
 

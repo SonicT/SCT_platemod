@@ -38,7 +38,7 @@ FUNC_forEachPlateDmg = {
 	_impactdam = 0.0;
 	_impactdam = (_dmgleft - _prot) max (_dmgleft/((_padset * _impactabs)+1));
 	
-	if(_impactdam > 0.005) then {
+	if((_impactdam > 0.005) && (_prot > 0)) then {
 		_platedmg = floor(_hp - (_impactdam * 10000));
 	};
 		
@@ -46,7 +46,7 @@ FUNC_forEachPlateDmg = {
 	then{
 	
 	};
-	systemChat format ["indiv. plate - dmg left : %1, hp : %2", _impactdam, _platedmg];
+	systemChat format ["indiv. plate - dmg left : %1, hp : %2", _impactdam, _platedmg]; //debug
 	_output = [_impactdam, _platedmg];
 		
 	
