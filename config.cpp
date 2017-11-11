@@ -104,6 +104,8 @@ class CfgFunctions{
 			
 			class BtnDelP{};
 			
+			class virtualLoad{};
+			
 		};
 	};
 };
