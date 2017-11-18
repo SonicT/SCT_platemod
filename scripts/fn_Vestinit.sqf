@@ -34,6 +34,13 @@ FUNC_forEachPlateDmg = {
 			_hitindex = 4;
 			systemChat format ["AAPM error : FUNC_forEachPlateDmg in fn_Vestinit.sqf somehow could not read variable 'hitindex' which means where the unit hit. set auto value to 'abdomen' number 4."];
 		};
+		
+		_cntp = count + _imarr;
+		if(!isNil("_hitindex") or (_hitindex < 9)) then {
+			for [{_i=0}, {_i < (9 - _cntp)}, {_i = _i + 1}] do {_protarr pushBack 0;};
+			systemChat format ["AAPM error : item %1 in config.cpp has low number of trauma-plate values - need 9 but just %2. autopush-back for stable system", _name, _cnt];
+		};
+		
 	};
 	_prot = _protarr select _hitindex;
 	
@@ -41,7 +48,7 @@ FUNC_forEachPlateDmg = {
 	_type = (getArray(configFile >> "CfgMagazines">> _name >> "SCT_ITEMINFO" >> "plateinfo")) select 1;
 	_impactdam = (_dmgleft - _prot) max (_dmgleft/((_padset * _impactabs)+1));
 	
-	if(_impactdam > 0) then {
+	if((_impactdam > 0) && ((_prot + _impactabs) > 0)) then {
 		_platedmg = floor(_hp - (_impactdam * 10000));
 		systemChat format ["indiv. plate - dmg left : %1, hp : %2, where : %3", _impactdam, _platedmg, _hitindex];
 	};
