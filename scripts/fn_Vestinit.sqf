@@ -2,6 +2,7 @@
 
 #include "SCT_PENETRATORS.hpp"
 #include "SCT_LPENET.hpp"
+#include "SCT_SPENET.hpp"
 	
 params ["_unit", "_ace"];
 
@@ -16,39 +17,41 @@ FUNC_OVERHAULARMOR = {
 
 FUNC_forEachPlateDmg = {
 	params["_plate", "_dmgleft", "_hitindex", "_padset"];
-	
-	systemChat format ["damage to plate input - name: %1, original : %2, where %3", _plate, _dmgleft, _hitindex];
-	
+
 	_name = _plate select 0;
 	_hp = _plate select 1;
-	_fullhp = getNumber (configFile >> "CfgMagazines" >> _name >> "count");
 	_platedmg = _hp;
 	_protarr = getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "enableparts");
 	_imarr = getArray(configFile >>"CfgMagazines">> _name >> "SCT_ITEMINFO" >> "blunttraumaPad");
+	
 	if((count _protarr <(_hitindex + 1)) or (count _imarr < (_hitindex +1)))exitWith{
-		_output = [0, "no"];
-		_output
+		_cnt = count _protarr;
+		if(!isNil("_hitindex") or (_hitindex < 9)) then {
+			for [{_i=0}, {_i < (9 - _cnt)}, {_i = _i + 1}] do {_protarr pushBack 0;};
+			systemChat format ["AAPM error : item %1 in config.cpp has low number of protection values - need 9 but just %2. autopush-back for stable system", _name, _cnt];
+		}
+		else{
+			_hitindex = 4;
+			systemChat format ["AAPM error : FUNC_forEachPlateDmg in fn_Vestinit.sqf somehow could not read variable 'hitindex' which means where the unit hit. set auto value to 'abdomen' number 4."];
+		};
 	};
-	
-	
 	_prot = _protarr select _hitindex;
 	
 	_impactabs = _imarr select _hitindex;
 	_type = (getArray(configFile >> "CfgMagazines">> _name >> "SCT_ITEMINFO" >> "plateinfo")) select 1;
-	_impactdam = 0.0;
 	_impactdam = (_dmgleft - _prot) max (_dmgleft/((_padset * _impactabs)+1));
 	
-	if((_impactdam > 0.005) && (_prot > 0)) then {
+	if(_impactdam > 0) then {
 		_platedmg = floor(_hp - (_impactdam * 10000));
+		systemChat format ["indiv. plate - dmg left : %1, hp : %2, where : %3", _impactdam, _platedmg, _hitindex];
 	};
 		
 	if(_penet < 0) //it means if the damage is from explosive, adding dmg to hitpoint "".
 	then{
 	
 	};
-	systemChat format ["indiv. plate - dmg left : %1, hp : %2", _impactdam, _platedmg]; //debug
 	_output = [_impactdam, _platedmg];
-		
+	//_output = [_impactdam, _hp - 2000];
 	
 	_output
 };
@@ -60,39 +63,74 @@ FUNC_DAMAGEMODULE = {
 	_debug = missionNameSpace getVariable ["SCT_PLATE_menu_DEBUG_Checkbox",false];
 	_humandam = 4+ (3.48*_penet* _penet); // divider for adjusting human flesh
 	
-	_impactdam = ((_impact - _basearmor)/_humandam)max (_impact/_traumapadedit);
+	_impactdam = ((_impact - _basearmor)/_humandam)max (_impact/(_traumapadedit+1));
 
 	_penetval = ((_penet*_impact) -(_basearmor))max 0; //this can have minus value.
 	_penetdam = (_penetval/(_humandam)) max 0; //internal penetrating damage
 	
 	_fdam = _impactdam + _penetdam;
 	
-	_plates = _unit getVariable ["SCT_EquippedPlates", []];
+	
+	_vplates = [];
+	_uplates = [];
+	_vcon = vestContainer _unit;
+	_ucon = uniformContainer _unit;
+
+	if(!(isNull _vcon)) then {
+		{
+			_name = _x select 0;
+			_magcount = _x select 1;
+			if(_name isKindOf ["AAPM_Item_Base_magtype", configFile >> "CfgMagazines"]) then{
+				_vplates pushBack [_name, _magcount];
+			};
+		}forEach (magazinesAmmoCargo _vcon);
+	};
+	
+	if(!(isNull _ucon)) then {
+		{
+			_name = _x select 0;
+			_magcount = _x select 1;
+			if(_name isKindOf ["AAPM_Item_Base_magtype", configFile >> "CfgMagazines"]) then{
+				_uplates pushBack [_name, _magcount];
+			};
+		}forEach (magazinesAmmoCargo _ucon);
+	};
 	
 	{
-		_arr= [];
+		_name = _x select 0;
+		_arr = [_x, _fdam, _hitindex, _traumapadedit] call FUNC_forEachPlateDmg;
+		_hp = _arr select 1;
+		_fdam = _arr select 0;
+		_vplates set [_forEachIndex, [_name, _hp]];
+		systemChat format ["plate should be damaged : %1, hp : %2", _fdam, _hp];
+		
+	}forEach _vplates;
+	
+	
+	{
 		_unit globalChat format ["damagemodule call plate %1, dmg : %2, where : %3", _x, _impact, _hitindex];
 		_arr = [_x, _fdam, _hitindex, _traumapadedit] call FUNC_forEachPlateDmg;
 		_hp = _arr select 1;
-		if(_hp isEqualTo "no") then {
+		_fdam = _arr select 0;
+		_uplates set [_forEachIndex, [(_x select 0), _hp]];
 		
-		} else{
-			_plates set [_forEachIndex, [(_x select 0), _hp]];
-			_fdam = _arr select 0;
-			systemChat format ["damaged %1, vest hp have to change to : %2", _fdam, _hp];
-			if(_hp <= 0) then {
-				_plates deleteAt _forEachIndex;
-			};
-			
-		};
-	}forEach _plates;
-		
-	_unit setVariable ["SCT_EquippedPlates", _plates];
+	}forEach _uplates;
 	
-	if(_debug && (_fdam > 0.05)) then {
-		systemChat format ["damage - impact : %1, penetration : %2, tot %3", _impactdam, _penetdam, _dam];
-	};
+	{
+		_unit removeItemFromVest (_x select 0);
+	}forEach _vplates;
+	
+	{
+		_vcon addMagazineAmmoCargo [_x select 0, 1, _x select 1];
 		
+	}forEach _vplates;
+	
+	{
+		_unit removeItemFromUniform (_x select 0);
+	}forEach _uplates;	
+	{
+		_ucon addMagazineAmmoCargo [_x select 0, 1, _x select 1];
+	}forEach _uplates;
 
 	_fdam
 };
@@ -140,13 +178,16 @@ FUNC_CHECKPLATE = {
 		
 	};
 
-	if(_hGear isEqualTo "") then {_hGear = "empty";}else{
+	//HEADGEAR FEATURE - CONTINUE WORK AT HOME
+	if(_hGear isEqualTo "") then {_hGear = "empty";}
+	else{
 		_armorvesthitpoint set [7, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"Head">>"armor")];
 		_armorvesthitpoint set [8, getNumber (configFile>>"cfgWeapons">>_hGear>>"ItemInfo">>"HitpointsProtectionInfo">>"Face">>"armor")];
 		
 	};
 		
-	if(_uniform isEqualTo "") then {_uniform = "empty"}else{
+	if(_uniform isEqualTo "") then {_uniform = "empty"}
+	else{
 		_armorfull = getNumber (configFile>>"cfgVehicles">>_uniformdata >>"armor");
 		_armoruniformhitpoint set [0, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitNeck">>"armor")];
 		_armoruniformhitpoint set [1, getNumber (configFile>>"cfgVehicles">>_uniformdata >>"Hitpoints">>"HitArms">>"armor")];
@@ -171,47 +212,60 @@ FUNC_CHECKPLATE = {
 	
 	//Make an array that will contain armor plate information.
 	//plate array 0 : full HP; 1 : armor value; 2 : armor name 3 : armor type
+	
 	{    
-		if(_x isKindof ["SonicT_Item_Base", configFile >> "CfgWeapons"]) then{
-			_name = _x;
-			_getItem = getText(configFile >> "CfgWeapons" >> _name >> "SCT_ITEMINFO" >> "magtype");
-			if((!isNil("_getItem"))&& (!(_getItem isEqualTo ""))) then{
-				[_unit, _getItem, -1] call SCT_fnc_EquipPlate;
-				systemChat format ["trying to add plate : %1", _getItem];
-			}else{
-				_getItem = _name + "_magtype";
-				[_unit, _getItem, -1]call SCT_fnc_EquipPlate;
-				systemChat format ["trying to add plate : %1", _getItem];
+		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{    
+			_infoarr = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "plateinfo");
+			_infoprot = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enableparts");
+			_cnt = count _infoprot;
+			_canAdd = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enablePlace");
+			if(count _infoarr > 0 && ("Vest" in _canAdd)) then{
+				_magtype = format["%1_magtype", _x];
+				_unit removeItemFromVest _x;
+				_unit addItemToVest _magtype;
 			};
-			_unit removeItemFromVest _x;
-		};		
+		};
 		
 	}forEach (vestItems _unit);
 	
 	{    
-		if(_x isKindof ["SonicT_Item_Base", configFile >> "CfgWeapons"]) then{    
-			_name = _x;
-			_getItem = getText(configFile >> "CfgWeapons" >> _name >> "SCT_ITEMINFO" >> "magtype");
-			if((!isNil("_getItem"))&& (!(_getItem isEqualTo ""))) then{
-				[_unit, _getItem, -1] call SCT_fnc_EquipPlate;
-				systemChat format ["trying to add plate : %1", _getItem];
-			}else{
-				_getItem = _name + "_magtype";
-				[_unit, _getItem, -1]call SCT_fnc_EquipPlate;
-				systemChat format ["trying to add plate : %1", _getItem];
+		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{    
+			_infoarr = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "plateinfo");
+			_infoprot = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enableparts");
+			_cnt = count _infoprot;
+			_canAdd = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enablePlace"); //it WAS my mistake where error comes out : you just ommitted this line
+			if(count _infoarr > 0 && ("Uniform" in _canAdd)) then{
+				_magtype = format["%1_magtype", _x];
+				_unit removeItemFromUniform _x;
+				_unit addItemToUniform _magtype;
 			};
-			_unit removeItemFromUniform _x;
 		};
 		
 	}forEach (uniformItems _unit);
+	
+	{    
+		if(_x isKindof ["SonicT_Item_Base", configFile >> "cfgWeapons"]) then{    
+			_infoarr = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "plateinfo");
+			_infoprot = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enableparts");
+			_cnt = count _infoprot;
+			_canAdd = getArray(configFile >>"CfgWeapons">> _x >> "SCT_ITEMINFO" >> "enablePlace"); //it WAS my mistake where error comes out : you just ommitted this line
+			if(count _infoarr > 0 && ("Backpack" in _canAdd)) then{
+				_magtype = format["%1_magtype", _x];
+				_unit removeItemFromBackpack _x;
+				_unit addItemToBackpack _magtype;
+			};
+		};
+		
+	}forEach (backpackItems _unit);
+	
+	//if there is no plate in your vest, the array saves 'no plate'
+
 	
 	//Make overhauled armor.
 	_overhaularmor = _hitprotection apply {[_x] call FUNC_OVERHAULARMOR};
 
 	_unit setVariable ["SCT_BaseArmor", _hitprotection];
 	_unit setVariable["SCT_newArmor", _overhaularmor];
-	
-	_baseimpactdiv = [1,1,1,1,1,1,1,1,1];
 	
 };
    
@@ -225,13 +279,17 @@ FUNC_EVENTDMGHANDLE = {
 	_unit = _this select 0;
 	_cancallhitback = false;
 
+
 	_basearmor = _unit getVariable "SCT_BaseArmor";
 	_newarmor = _unit getVariable "SCT_newArmor";
 
-	if(isNil "_basearmor") then {_basearmor = [2, 10, 2, 2, 2 ,12,10];}; //if basearmor is Nil return to vanilla civilian default.
+	if(isNil "_basearmor") then {_basearmor = [1,5,1,1,1,6,5];}; //if basearmor is Nil return to vanilla civilian default.
 	//armor : 0 - hitneck, 1 - hitnarms, 2 - hitchest 3- hitdiaphragm, 4- hitabdomen, 5- hitpelvis, 6- hitlegs 7- HITHEAD, 8-HITFACE
 	
 	_highspeed = 0; // this value will determine whether hard armor needs or not.       
+	_endurance = _armorstat select 0;
+	_platetype = ((_armorstat select 1) select 0) select 1;
+	_tPad = _armorstat select 2;
 	
 	_shooter = _this select 3;
 	_dmg = _this select 2;
@@ -246,12 +304,13 @@ FUNC_EVENTDMGHANDLE = {
 	
 	_hitnow = _dmg - _prevdmg; //know current damage
 	_originalhit = _hitnow;
-	if(getNumber (configFile >> "cfgAmmo" >> _dmgfrom >> "typicalSpeed") > 600) then {_highspeed = _rifledmg;} else{_highspeed = 0;}; // penetrates soft armor, multiplying dmg
-	if(_dmgfrom in SCT_PENETRATORS) then {_highspeed = _rifledmg*1.5; }; //AP rounds. Believed to be not effective on flesh targets.
-	if(_dmgfrom in SCT_LPENET) then {_highspeed = _rifledmg * 0.85;}; // less penetratable rounds - Believed to be effective on flesh targets, but not effective to other materials.
+	if(getNumber (configFile >> "cfgAmmo" >> _dmgfrom >> "typicalSpeed") > 800) then {_highspeed = _rifledmg;} else{_highspeed = 0;}; // penetrates soft armor, multiplying dmg
+	if(getNumber (configFile >> "cfgAmmo" >> _dmgfrom >> "typicalSpeed") > 980) then {_highspeed*1.3;} else{_highspeed = 0;}; // Better simulation of higher-velocity cartridges like M193.
+	if(_dmgfrom in SCT_PENETRATORS) then {_highspeed = _rifledmg*1.7; }; //Basic AP rounds. Believed to be not effective on flesh targets.
+	if(_dmgfrom in SCT_SPENET) then {_highspeed = _rifledmg*2.2; }; //Exotic AP rounds. Barely effective on flesh targets but brutally good against armor.
+	if(_dmgfrom in SCT_LPENET) then {_highspeed = _rifledmg*0.85;}; // less penetratable rounds - Believed to be effective on flesh targets, but not effective to other materials.
 		//implement new damage model
-	
-	_veh = vehicle _unit;
+
 	
 	
 	switch (_hitpoint) do {
@@ -339,7 +398,7 @@ FUNC_EVENTDMGHANDLE = {
 		
 		case "" : {
 			_cancallhitback = true;
-	
+			_hitnow = 0;
 			_hmul = 1;
 			if(_dmgfrom isKindOf "BulletBase") then {
 				
@@ -361,7 +420,9 @@ FUNC_EVENTDMGHANDLE = {
 					_hitnow = _hitnow * _hmul;
 				};
 				
-			}else{
+			}
+			/*
+			else{
 				if(_dmgfrom != "") then {
 					_orhit = _hitnow;
 					if(_debug) then {
@@ -376,12 +437,12 @@ FUNC_EVENTDMGHANDLE = {
 					_hitnow = _totdmg/32;
 				};
 			};
+			*/
 		};
 		default {
 			
 		};
-	};
-		
+	};		
 	_dmg = _hitnow + _prevdmg;
 	
 	if((_dmg < 0.02) and (_dmgfrom isKindOf "BulletBase")) then {
@@ -433,7 +494,8 @@ FUNC_EVENTDMGHANDLE = {
 if(_ace == 1) then {
 _unit addEventHandler["HandleDamage", {[_this select 0, _this select 1, _this call FUNC_EVENTDMGHANDLE, _this select 3, _this select 4, _this select 5, _this select 6] call ACE_medical_fnc_handleDamage;}];
 
-}else{
+}
+else{
 	_unit addEventHandler["HandleDamage", {[_this select 0, _this select 1, _this select 2, _this select 3, _this select 4, _this select 5, _this select 6, _this select 7] call FUNC_EVENTDMGHANDLE;}];
 
 };
